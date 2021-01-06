@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends 'ccfit_app/base.html' %}
+
+
+{% block body_block %}
+{{user.userprofileinfo.name}}
+{{user.userprofileinfo.gender}}
+<div class="container">
+    <h1>EDIT PROFILE</h1>
+
+    <form class="user"  method="post" id="loginForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="subtmit" class="font-weight-bold btn btn-warning btn-block">edit profile</button>
+    </form>
+    <a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign up</a>
+</div>
+{% endblock %}

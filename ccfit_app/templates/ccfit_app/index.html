@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% extends 'ccfit_app/base.html' %}
+{% block body_block %}
+    <h1>WELCOME TO CCFIT</h1>
+
+    <ul class="nav navbar-nav navbar-right">
+        						{% if user.is_authenticated %}
+                          {% if user.is_superuser %}
+                            <p><a href="{% url 'ccfit_app:all_users' %}">MANAGE USERS</a></p>
+                          {% endif %}
+                          <p><a href="{% url 'ccfit_app:logout' %}">logout</a></p>
+                          <p><a href="{% url 'ccfit_app:edit_profile' %}">edit settings</a></p>
+                          {% if user.userprofileinfo.id %}
+                            <p><a href="{% url 'ccfit_app:edit_profile_page' user.userprofileinfo.id %}">edit profile</a></p>
+                          {% else %}
+                            <p><a href="{% url 'ccfit_app:create_profile_page' %}">Create profile page</a></p>
+                          {% endif %}
+                          <p><a href="{% url 'ccfit_app:booking_page' %}">Make a booking</a></p>
+        						{% else %}
+                          <p><a href="{% url 'ccfit_app:form_name' %}">GO TO FORM PAGE</a></p>
+                          <p><a href="{% url 'ccfit_app:login' %}">LOGIN</a></p>
+        						      <li><a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign up</a></li>
+        		        {% endif %}
+    </ul>
+    {% if type != 'USER' %}
+    <p>TEACHER</p>
+    <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
+    {% else %}
+    <p>USER</p>
+    <p><a href="{% url 'ccfit_app:my_bookings' %}">CHECK PREVIOUS BOOKINGS</a></p>
+    {% endif %}
+{% endblock %}

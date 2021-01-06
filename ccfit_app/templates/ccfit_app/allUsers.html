@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% extends 'ccfit_app/base.html' %}
+{% block body_block %}
+<h1>THATS THE MANAGE USERS PAGE</h1>
+<a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
+<p></p>
+
+<form method="GET">
+  <div class="input-group-prepend">
+    <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Buscar</button>
+  </div>
+  <input type="text" placeholder="Type the email" name="search" id="search">
+  <div class="table-responsive">
+    <table class="table table-hover border rounded shadow-sm bg-white" id="dataTable" width="100%" cellspacing="0">
+      <thead>
+        <tr class="bg-primary text-white">
+          <th style="min-width:20px">email</th>
+          <th style="min-width:110px">gender</th>
+          <th style="min-width:80px">type</th>
+          <th style="min-width:80px">Active?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td>{{ user.email }}</td>
+          <td>{{ user.gender }}</td>
+          <td>{{ user.type }}</td>
+          <td>{{ user.active }}</td>
+          <td>
+          <div align="center">
+              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm" onclick="location.href='{% url 'ccfit_app:update_user' user.pk %}'"  title="Editar informações do cliente">
+                <span class="fa fa-edit"></span>
+              </button>
+          </div>
+        </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</form>
+
+{% endblock %}

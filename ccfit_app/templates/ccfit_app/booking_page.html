@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+{% extends 'ccfit_app/base.html' %}
+{% block body_block %}
+<h1>THATS THE BOOKING PAGE</h1>
+<a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
+<input type="date" id="date-input" required>
+<button id="submit">Submit</button>
+<p></p>
+<!--{{ form.my_date_field }}-->
+<button type="button" onclick="location.href='{% url 'ccfit_app:workout' %}'" id='workout' name="button">BOOK WORKOUT</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:pilates' %}'" id='pilates' name="button">BOOK PILATES</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:jump' %}'" id='jump' name="button">BOOK JUMP</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:spin' %}'" id='spin' name="button">BOOK SPIN</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:yoga' %}'" id='yoga' name="button">BOOK YOGA</button>
+
+
+
+<script>
+$("#workout").prop("disabled",true);
+$("#pilates").prop("disabled",true);
+$("#jump").prop("disabled",true);
+$("#spin").prop("disabled",true);
+$("#yoga").prop("disabled",true);
+
+  $(document).ready(function(){
+    $('#submit').on('click', function(){
+      if($('#date-input').val() == ''){
+        alert('Input can not be left blank');
+      }else{
+         $.ajax({
+        type : 'POST',
+        url: "{% url 'ccfit_app:validates' %}",
+        datatype: "json",
+        data: {'date_verification': $("#date-input").val()},
+        success: function(json){
+           $("#workout").prop("disabled", (json.workout == 'true'));
+           $("#pilates").prop("disabled", (json.pilates == 'true'));
+           $("#jump").prop("disabled", (json.jump == 'true'));
+           $("#spin").prop("disabled", (json.spin == 'true'));
+           $("#yoga").prop("disabled", (json.yoga == 'true'));
+        }
+      });
+    }
+    });
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+  });
+</script>
+
+{% endblock %}

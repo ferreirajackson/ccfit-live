@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+{% extends 'ccfit_app/base.html' %}
+{% load static %}
+{% load bootstrap3 %}
+
+{% block body_block %}
+<div class="container">
+    <h1>CREATE PROFILE PAGE</h1>
+
+    <form class="user"  method="post" id="loginForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="font-weight-bold btn btn-warning btn-block">EDIT IT</button>
+    </form>
+</div>
+{% endblock %}

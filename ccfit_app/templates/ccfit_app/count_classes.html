@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+{% extends 'ccfit_app/base.html' %}
+{% block body_block %}
+    <h1>WELCOME TO COUNT CLASSES {{title}}</h1>
+
+
+    {% if session_1.enable %}
+    <div class="">
+      <b>{{session_1.start}} - {{session_1.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=1 %}'" name="button">{{session_1.1}}</button>
+    </div>
+    {% endif %}
+
+    {% if session_2.enable %}
+    <div class="">
+      <b>{{session_2.start}} - {{session_2.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=2 %}'"  name="button">{{session_2.2}}</button>
+    </div>
+    {% endif %}
+
+    {% if session_3.enable %}
+    <div class="">
+      <b>{{session_3.start}} - {{session_3.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=3 %}'"  name="button">{{session_3.3}}</button>
+    </div>
+    {% endif %}
+
+
+    {% if session_4.enable %}
+    <div class="">
+      <b>{{session_4.start}} - {{session_4.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=4 %}'"  name="button">{{session_4.4}}</button>
+    </div>
+    {% endif %}
+
+
+
+    {% if session_5.enable %}
+    <div class="">
+      <b>{{session_5.start}} - {{session_5.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=5 %}'"  name="button">{{session_5.5}}</button>
+    </div>
+    {% endif %}
+
+
+
+    {% if session_6.enable %}
+    <div class="">
+      <b>{{session_6.start}} - {{session_6.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=6 %}'" name="button">{{session_6.6}}</button>
+    </div>
+    {% endif %}
+
+{% endblock %}
