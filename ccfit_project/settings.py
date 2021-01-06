@@ -84,8 +84,12 @@ WSGI_APPLICATION = 'ccfit_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'da49s5jm09f8v0',
+        'HOST': 'ec2-54-242-120-138.compute-1.amazonaws.com',
+        'PORT': '5432',
+        'USER': 'bjccntxvihqpyy',
+        'PASSWORD': '24def417f7d48a275c8c40ec49fc715a51151a7ec93e5aa2b224cd3d59b44acb!',
     }
 }
 
