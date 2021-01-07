@@ -34,7 +34,7 @@ SECRET_KEY = 'buezc+n66(@oi9dv6%o!gez$$0m4g9-2p(*vxkiu^s%dlw(g8r'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ccfitgym.herokuapp.com/', '127.0.0.1']
 
 
 # Application definition
