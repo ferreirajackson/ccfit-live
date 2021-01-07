@@ -1,1 +1,1 @@
-web: gunicorn ccfit_project.wsgi --log-file -
+web: gunicorn ccfit_project.wsgi

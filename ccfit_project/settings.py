@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import os
 from pathlib import Path
 import environ
+import django_heroku
+import dj_database_url
+from decouple import config
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
@@ -31,7 +34,7 @@ SECRET_KEY = 'buezc+n66(@oi9dv6%o!gez$$0m4g9-2p(*vxkiu^s%dlw(g8r'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['ccfit.herokuapp.com/', '127.0.0.1']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -49,13 +52,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.Whitenoisemiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'ccfit_project.urls'
@@ -84,12 +87,8 @@ WSGI_APPLICATION = 'ccfit_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'da49s5jm09f8v0',
-        'HOST': 'ec2-54-242-120-138.compute-1.amazonaws.com',
-        'PORT': '5432',
-        'USER': 'bjccntxvihqpyy',
-        'PASSWORD': '24def417f7d48a275c8c40ec49fc715a51151a7ec93e5aa2b224cd3d59b44acb!',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -133,7 +132,9 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+
 MEDIA_URL = '/images/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
@@ -151,3 +152,6 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'
+
+
+django_heroku.settings(locals())
