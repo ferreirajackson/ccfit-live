@@ -32,7 +32,7 @@ AUTH_USER_MODEL = 'ccfit_app.User'
 SECRET_KEY = 'buezc+n66(@oi9dv6%o!gez$$0m4g9-2p(*vxkiu^s%dlw(g8r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['ccfitgym.herokuapp.com/', '127.0.0.1']
 
