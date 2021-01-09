@@ -15,18 +15,23 @@
                           {% else %}
                             <p><a href="{% url 'ccfit_app:create_profile_page' %}">Create profile page</a></p>
                           {% endif %}
-                          <p><a href="{% url 'ccfit_app:booking_page' %}">Make a booking</a></p>
+                          {% if registration %}
+                            <p><a href="{% url 'ccfit_app:booking_page' %}">Make a booking</a></p>
+                          {% endif %}
         						{% else %}
                           <p><a href="{% url 'ccfit_app:form_name' %}">GO TO FORM PAGE</a></p>
                           <p><a href="{% url 'ccfit_app:login' %}">LOGIN</a></p>
         						      <li><a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign up</a></li>
         		        {% endif %}
     </ul>
-    {% if type != 'USER' %}
-    <p>TEACHER</p>
-    <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
-    {% else %}
+    {% if type == 'USER' %}
     <p>USER</p>
     <p><a href="{% url 'ccfit_app:my_bookings' %}">CHECK PREVIOUS BOOKINGS</a></p>
+    {% elif type == 'TEACHER'  %}
+    <p>TEACHER</p>
+    <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
+    {% else  %}
+    <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
+    <p>ADMINISTRATOR</p>
     {% endif %}
 {% endblock %}

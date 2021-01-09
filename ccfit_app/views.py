@@ -1,15 +1,15 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import Workout, UserProfileInfo, Pilates, Yoga, Spin, Jump, User
+from .models import Workout, UserProfileInfo, Pilates, Yoga, Spin, Jump, User, MaxSession
 from django.contrib.auth.decorators import login_required
 from . import forms
 from django.views import generic
-from ccfit_app.forms import SignUpForm, EditProfileForm, ProfilePageForm, ExampleForm, UserProfileInfoForm, UserCreateForm, WorkoutForm, UserProfileInfoFormUsers
+from ccfit_app.forms import SignUpForm, EditProfileForm, ProfilePageForm, ExampleForm, UserProfileInfoForm, UserCreateForm, WorkoutForm, UserUpdateForm, UserProfileInfoFormUsers
 from django.contrib.auth import login, logout, authenticate, login
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordChangeView
-from django.views.generic import CreateView, UpdateView, TemplateView, ListView
+from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from datetime import datetime
 import time
@@ -17,8 +17,60 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from .decorators import user_all_classes, user_workout
 from django.utils.decorators import method_decorator
+from io import BytesIO
+from django.template.loader import get_template
+
+from xhtml2pdf import pisa
 
 # Create your views here.
+
+def render_to_pdf(template_src, context_dict={}):
+	template = get_template(template_src)
+	html  = template.render(context_dict)
+	result = BytesIO()
+	pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+	if not pdf.err:
+		return HttpResponse(result.getvalue(), content_type='application/pdf')
+	return None
+
+
+#Opens up page as PDF
+class ViewPDF(View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            "company": "Display",
+        	"address": "123 Street name",
+        	"city": "Vancouver",
+        	"state": "WA",
+        	"zipcode": "98663",
+            "phone": "555-555-2345",
+        	"email": "youremail@dennisivy.com",
+        	"website": "dennisivy.com",
+        }
+        pdf = render_to_pdf('ccfit_app/pdf_template.html', data)
+        return HttpResponse(pdf, content_type='application/pdf')
+
+#Automaticly downloads to PDF file
+class DownloadPDF(View):
+    def get(self, request, *args, **kwargs):
+
+        data = {
+            "company": "Download",
+        	"address": "123 Street name",
+        	"city": "Vancouver",
+        	"state": "WA",
+            "zipcode": "98663",
+            "phone": "555-555-2345",
+        	"email": "youremail@dennisivy.com",
+        	"website": "dennisivy.com",
+        }
+
+        pdf = render_to_pdf('ccfit_app/pdf_template.html', data)
+        response = HttpResponse(pdf, content_type='application/pdf')
+        content = 'attachment; filename="report.pdf"'
+        response['Content-Disposition'] = content
+        return response
+
 
 @login_required
 def Confirmation_Booking(request, n1):
@@ -225,18 +277,18 @@ class WorkoutView(LoginRequiredMixin, generic.TemplateView):
                     if start_time <= current_time:
                         context[key]['expired'] = False
 
-                    #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Workout.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 3:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
-
-
-
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.workout, 'THIS IS THE NUMBER COLLECTED')
+                        #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
+                        print(context[key]['session_number'])
+                        count = Workout.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.workout:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
             elif booking_date_object < today_date_object:
                 for key in context:
@@ -245,15 +297,19 @@ class WorkoutView(LoginRequiredMixin, generic.TemplateView):
             else:
                 for key in context:
                     print(' NOTHING 0-------------------0 ')
-                    #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Workout.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 3:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.workout, 'THIS IS THE NUMBER COLLECTED')
+                        #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Workout.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.workout:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
             if booked_flag == 'Y':
                 for key in context:
@@ -338,17 +394,19 @@ class PilatesView(LoginRequiredMixin, generic.TemplateView):
                     if start_time <= current_time:
                         context[key]['expired'] = False
 
-                    #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Pilates.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
-
-
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.pilates, 'THIS IS THE NUMBER COLLECTED')
+                        #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Pilates.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.pilates:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
 
             elif booking_date_object < today_date_object:
@@ -358,15 +416,20 @@ class PilatesView(LoginRequiredMixin, generic.TemplateView):
             else:
                 for key in context:
                     print(' NOTHING 0-------------------0 ')
-                    #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Pilates.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.pilates, 'THIS IS THE NUMBER COLLECTED')
+
+                        #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Pilates.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.pilates:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
             if booked_flag == 'Y':
                 for key in context:
@@ -451,18 +514,20 @@ class YogaView(LoginRequiredMixin, generic.TemplateView):
                     if start_time <= current_time:
                         context[key]['expired'] = False
 
-                    #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Yoga.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.yoga, 'THIS IS THE NUMBER COLLECTED')
 
-
-
+                        #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Yoga.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.yoga:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
             elif booking_date_object < today_date_object:
                 for key in context:
@@ -472,14 +537,19 @@ class YogaView(LoginRequiredMixin, generic.TemplateView):
                 for key in context:
                     print(' NOTHING 0-------------------0 ')
                     #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Yoga.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.yoga, 'THIS IS THE NUMBER COLLECTED')
+
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Yoga.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.yoga:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
             if booked_flag == 'Y':
                 for key in context:
@@ -564,15 +634,20 @@ class SpinView(LoginRequiredMixin, generic.TemplateView):
                     if start_time <= current_time:
                         context[key]['expired'] = False
 
-                    #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Spin.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.spin, 'THIS IS THE NUMBER COLLECTED')
+
+                        #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Spin.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.spin:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
 
 
@@ -585,14 +660,19 @@ class SpinView(LoginRequiredMixin, generic.TemplateView):
                 for key in context:
                     print(' NOTHING 0-------------------0 ')
                     #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Spin.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.spin, 'THIS IS THE NUMBER COLLECTED')
+
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Spin.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.spin:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
 
             if booked_flag == 'Y':
                 for key in context:
@@ -674,14 +754,19 @@ class JumpView(LoginRequiredMixin, generic.TemplateView):
                     if start_time <= current_time:
                         context[key]['expired'] = False
                     #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Jump.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.jump, 'THIS IS THE NUMBER COLLECTED')
+
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Jump.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.jump:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
             elif booking_date_object < today_date_object:
                 for key in context:
                     context[key]['expired'] = False
@@ -690,14 +775,19 @@ class JumpView(LoginRequiredMixin, generic.TemplateView):
                 for key in context:
                     print(' NOTHING 0-------------------0 ')
                     #DO THE LOGIC TO CONTROL THE AMOUNT OF USERS
-                    print('I NEED THIS NUMBERRRRRRRRRRRRRR')
-                    print(context[key]['session_number'])
-                    count = Jump.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
-                    print(count)
-                    if count == 2:
-                        context[key]['status'] = 'FULLY BOOKED'
-                        context[key]['enable'] = True
-                        print('FULLY BOOKED')
+                    #Getting the number max of users per session and class from table MaxSession model
+                    num_max_users = MaxSession.objects.filter(key='CCFIT')
+                    for number in num_max_users:
+                        print(number.jump, 'THIS IS THE NUMBER COLLECTED')
+
+                        print('I NEED THIS NUMBERRRRRRRRRRRRRR')
+                        print(context[key]['session_number'])
+                        count = Jump.objects.filter(date=self.request.session['value'], session_number=context[key]['session_number']).count()
+                        print(count)
+                        if count == number.jump:
+                            context[key]['status'] = 'FULLY BOOKED'
+                            context[key]['enable'] = True
+                            print('FULLY BOOKED')
             if booked_flag == 'Y':
                 for key in context:
                     #enabling the cancelling for users that have booked and the class is fully booked
@@ -973,9 +1063,34 @@ class CreateProfilePageView(LoginRequiredMixin, CreateView):
 class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
     model = UserProfileInfo
     template_name = "ccfit_app/edit_profile_page.html"
-    fields = ['name', 'gender']
+    #fields = ['nickname', 'gender', 'birth_date', 'address1', 'address2', 'county', 'country', 'prefix', 'phone']
+    form_class = ProfilePageForm
     success_url = reverse_lazy('ccfit:index')
 
+
+    def get(self, request, pk):
+        print(pk, 've se imprime pkkkkkkkkkkkkkk')
+        obj = get_object_or_404(UserProfileInfo, pk = pk)
+        form = ProfilePageForm(instance = obj)
+        return render(request, 'ccfit_app/edit_profile_page.html', {
+        'form': form
+    })
+
+    def post(self, request, pk):
+        print("POST METHOD")
+        obj = get_object_or_404(UserProfileInfo, pk = pk)
+        form = ProfilePageForm(data=request.POST, instance = obj)
+        print(form.is_valid())
+        if  form.is_valid():
+            print('got here')
+            profile = form.save(commit=False)
+            profile.registration_completed = True
+            profile.save()
+            return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+        else:
+            print("FORMS NÃO VALIDOS")
+            #return redirect('accounts:allUser')
+            return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 
 class PasswordsChangeView(LoginRequiredMixin, PasswordChangeView):
     form_class = PasswordChangeForm
@@ -1043,10 +1158,12 @@ class EditProfile(LoginRequiredMixin, generic.UpdateView):
 def index(request):
     user = UserProfileInfo.objects.filter(email=request.user)
     value_type = 'USER'
+    registered = False
     if user.exists():
         for course in user:
             value_type = course.type
-    mydict = {'type': value_type}
+            registered = course.registration_completed
+    mydict = {'type': value_type, 'registration': registered}
     return render(request, 'ccfit_app/index.html', mydict)
 
 
@@ -1058,6 +1175,7 @@ class UsersListView(LoginRequiredMixin, ListView):
     context_object_name = "users"
 
     def get_queryset(self):
+        print("FAZ A BUSCA PADRAO DO FILTRO")
         email = self.request.GET.get('search')
         print(email, 'thats the email')
         object_list = self.model.objects.all()
@@ -1073,3 +1191,39 @@ class UsersUpdateView(LoginRequiredMixin, UpdateView):
     template_name = "ccfit_app/updateUsers.html"
     form_class = UserProfileInfoFormUsers
     success_url = reverse_lazy('ccfit:all_users')
+
+    def get(self, request, pk):
+        print(pk, 've se imprime pkkkkkkkkkkkkkk')
+        obj = get_object_or_404(UserProfileInfo, pk = pk)
+        form = UserProfileInfoFormUsers(instance = obj)
+        return render(request, 'ccfit_app/updateUsers.html', {
+        'form': form
+    })
+
+    def post(self, request, pk):
+        print("POST METHOD")
+        obj = get_object_or_404(UserProfileInfo, pk = pk)
+        form = UserProfileInfoFormUsers(data=request.POST, instance = obj)
+        print(form.is_valid())
+        if  form.is_valid():
+            system_user = User.objects.get(email=obj.email)
+            print("if valido")
+            type_user = obj.type
+            print(type, 'returning type to see if is correct')
+            if type_user == 'ADMINISTRATOR':
+                system_user.is_superuser= True
+                system_user.is_staff= True
+                print("SUPERUSER DEFINED")
+            else:
+                system_user.is_superuser= False
+                system_user.is_staff= False
+                print("SUPERUSER = false")
+            print('esse teste user')
+            system_user.save()
+            profile = form.save(commit=False)
+            profile.save()
+            return HttpResponseRedirect(reverse_lazy('ccfit:all_users'))
+        else:
+            print("FORMS NÃO VALIDOS")
+            #return redirect('accounts:allUser')
+            return HttpResponseRedirect(reverse_lazy('ccfit:all_users'))

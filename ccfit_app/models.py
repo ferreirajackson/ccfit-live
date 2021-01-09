@@ -66,6 +66,7 @@ class UserProfileInfo(models.Model):
     TYPE_USER = (
     ('USER','USER'),
     ('TEACHER','TEACHER'),
+    ('ADMINISTRATOR','ADMINISTRATOR'),
     )
 
     ACTIVE = (
@@ -76,10 +77,18 @@ class UserProfileInfo(models.Model):
 
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     email = models.EmailField(max_length=80,null=True)
-    name = models.CharField(max_length=50,null=True)
+    nickname = models.CharField(max_length=50,null=True)
     gender = models.CharField(max_length=50,null=True)
     type = models.CharField(max_length=15, choices = TYPE_USER, null=True)
     active = models.CharField(max_length=15, choices = ACTIVE, null=True)
+    birth_date = models.DateField(null=True)
+    address1 = models.CharField(max_length=300,null=True)
+    address2 = models.CharField(max_length=300,null=True)
+    county = models.CharField(max_length=20,null=True)
+    country = models.CharField(max_length=20,null=True)
+    prefix = models.CharField(max_length=4,null=True)
+    phone = models.CharField(max_length=10,null=True)
+    registration_completed = models.BooleanField(default=False)
 
 
 
@@ -88,6 +97,19 @@ class UserProfileInfo(models.Model):
 
     def get_absolute_url(self):
         return reverse_lazy('ccfit:index')
+
+
+class MaxSession(models.Model):
+    key = models.CharField(max_length=5,null=True)
+    description = models.CharField(max_length=300,null=True)
+    workout = models.IntegerField(null=True)
+    pilates = models.IntegerField(null=True)
+    yoga = models.IntegerField(null=True)
+    spin = models.IntegerField(null=True)
+    jump = models.IntegerField(null=True)
+
+    def __str__(self):
+        return self.description
 
 
 class Workout(models.Model):

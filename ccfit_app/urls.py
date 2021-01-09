@@ -40,5 +40,7 @@ urlpatterns = [
     url(r'check_classes/change/(?P<class_number>\d)', views.ClassesCountView, name='classes_count'),
     url(r'class/(?P<session>\d)', views.Check_Class_Amount, name='check_class_amount'),
     url(r'my_bookings/', views.MyBookings, name='my_bookings'),
+    url(r'pdf_view/', views.ViewPDF.as_view(), name="pdf_view"),
+    url(r'pdf_download/', views.DownloadPDF.as_view(), name="pdf_download"),
 
 ]

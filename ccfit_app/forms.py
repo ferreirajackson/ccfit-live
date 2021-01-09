@@ -42,7 +42,7 @@ class ProfilePageForm(forms.ModelForm):
 
     class Meta:
         model = UserProfileInfo
-        fields = ('name', 'gender')
+        fields = ('nickname', 'gender', 'birth_date', 'address1', 'address2', 'county', 'country', 'prefix', 'phone')
 
 
 class EditProfileForm(UserChangeForm):
@@ -57,7 +57,7 @@ class EditProfileForm(UserChangeForm):
 
 class UserCreateForm(UserCreationForm):
     class Meta:
-        fields=('email', 'password1', 'password2')
+        fields=('email','first_name','last_name', 'password1', 'password2')
         model = get_user_model()
 
 
@@ -81,6 +81,13 @@ class UserProfileInfoForm(forms.ModelForm):
         self.fields['type'].widget = forms.HiddenInput()
         self.fields['active'].initial = 'INACTIVE'
         self.fields['active'].widget = forms.HiddenInput()
+
+
+class UserUpdateForm(UserCreationForm):
+
+    class Meta:
+        fields=['email']
+        model = get_user_model()
 
 
 class UserProfileInfoFormUsers(forms.ModelForm):
