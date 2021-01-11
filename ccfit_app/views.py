@@ -24,7 +24,7 @@ from xhtml2pdf import pisa
 
 # Create your views here.
 
-stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1x6BJ5yOpPik2qct0yNaewqrLNerI7oQbdLf00Oyz3Ulph'
+stripe.api_key = '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'
 
 def Payment_request(request):
 
