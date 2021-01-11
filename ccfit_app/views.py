@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import Workout, UserProfileInfo, Pilates, Yoga, Spin, Jump, User, MaxSession
 from django.contrib.auth.decorators import login_required
@@ -7,7 +7,7 @@ from django.views import generic
 from ccfit_app.forms import SignUpForm, EditProfileForm, ProfilePageForm, ExampleForm, UserProfileInfoForm, UserCreateForm, WorkoutForm, UserUpdateForm, UserProfileInfoFormUsers
 from django.contrib.auth import login, logout, authenticate, login
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -19,10 +19,38 @@ from .decorators import user_all_classes, user_workout
 from django.utils.decorators import method_decorator
 from io import BytesIO
 from django.template.loader import get_template
-
+import stripe
 from xhtml2pdf import pisa
 
 # Create your views here.
+
+stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1x6BJ5yOpPik2qct0yNaewqrLNerI7oQbdLf00Oyz3Ulph'
+
+def Payment_request(request):
+
+	amount = 5
+	if request.method == 'POST':
+		print('Data:', request.POST)
+
+		amount = int(request.POST['amount'])
+
+		customer = stripe.Customer.create(
+			email=request.POST['email'],
+			name=request.POST['nickname'],
+			source=request.POST['stripeToken']
+		)
+		charge = stripe.Charge.create(
+			customer=customer,
+			amount=amount*100,
+			currency='eur',
+			description='Donation',
+		)
+	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+
+
+def Payment(request):
+    return render(request, 'ccfit_app/payment.html')
+
 
 def render_to_pdf(template_src, context_dict={}):
 	template = get_template(template_src)
@@ -48,28 +76,88 @@ class ViewPDF(View):
         	"website": "dennisivy.com",
         }
         pdf = render_to_pdf('ccfit_app/pdf_template.html', data)
+
         return HttpResponse(pdf, content_type='application/pdf')
+
+
+class PDF(View):
+	def get(self, request, *args, **kwargs):
+		print(request.session['value'])
+		dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
+		class_number = str(request.session['class'])
+		print(dict[class_number])
+		print(type(dict[class_number]))
+		list = [1,2,3,4,5]
+		list_user = []
+		data_second = {}
+		for num in list:
+			new = dict[class_number].objects.filter(date=request.session['value'], session_number=num)
+			if new.exists():
+				for unit in new:
+					print(unit.date, 'this')
+					print(unit.email_user, 'this')
+					print(unit.session_number, 'this')
+					list_user.append(unit.email_user)
+				d1 = {str(num): list_user}
+				data_second.update(d1)
+				list_user = []
+			else:
+				print("NOTHING FOR THIS ", num)
+		print('HERE I WANT TO SEE THE RESULT OF THE DICT AND LIST')
+		print(data_second)
+		print('**********************************************************************************')
+		context = {"work" : Workout.objects.filter(date=self.request.session['value']).order_by('session_number')}
+		data = {
+		"company": "Display",
+		"address": "123 Street name",
+		"city": "Vancouver",
+		"state": "WA",
+		"zipcode": "98663",
+		"phone": "555-555-2345",
+		"email": "youremail@dennisivy.com",
+		"website": "dennisivy.com",
+
+		}
+		pdf = render_to_pdf('ccfit_app/pdf_template.html', {'data': data_second})
+
+		return HttpResponse(pdf, content_type='application/pdf')
+
+
 
 #Automaticly downloads to PDF file
 class DownloadPDF(View):
-    def get(self, request, *args, **kwargs):
+	def get(self, request, *args, **kwargs):
+		print(request.session['value'])
+		dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
+		class_number = str(request.session['class'])
+		print(dict[class_number])
+		print(type(dict[class_number]))
+		list = [1,2,3,4,5]
+		list_user = []
+		data_second = {}
+		for num in list:
+			new = dict[class_number].objects.filter(date=request.session['value'], session_number=num)
+			if new.exists():
+				for unit in new:
+					print(unit.date, 'this')
+					print(unit.email_user, 'this')
+					print(unit.session_number, 'this')
+					list_user.append(unit.email_user)
+				d1 = {str(num): list_user}
+				data_second.update(d1)
+				list_user = []
+			else:
+				print("NOTHING FOR THIS ", num)
+		print('HERE I WANT TO SEE THE RESULT OF THE DICT AND LIST')
+		print(data_second)
+		print('**********************************************************************************')
+		context = {"work" : Workout.objects.filter(date=self.request.session['value']).order_by('session_number')}
 
-        data = {
-            "company": "Download",
-        	"address": "123 Street name",
-        	"city": "Vancouver",
-        	"state": "WA",
-            "zipcode": "98663",
-            "phone": "555-555-2345",
-        	"email": "youremail@dennisivy.com",
-        	"website": "dennisivy.com",
-        }
-
-        pdf = render_to_pdf('ccfit_app/pdf_template.html', data)
-        response = HttpResponse(pdf, content_type='application/pdf')
-        content = 'attachment; filename="report.pdf"'
-        response['Content-Disposition'] = content
-        return response
+		pdf = render_to_pdf('ccfit_app/pdf_template.html', {'data': data_second})
+		response = HttpResponse(pdf, content_type='application/pdf')
+		content = 'attachment; filename="report.pdf"'
+		response['Content-Disposition'] = content
+		return response
 
 
 @login_required
@@ -155,7 +243,7 @@ def Validate_date(request):
 @login_required
 def Check_Class_Amount(request, session):
     cancel = User.objects.filter(email=request.user)
-    print('CHECKING')
+    print('CHECKING am')
     if cancel.exists():
         context = {}
         list = []
@@ -184,7 +272,10 @@ def ClassesCountView(request, class_number):
         print('AND PRINTED THE CLASS', class_number)
         dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
         list = [1,2,3,4,5]
-
+        #print(dict[class_number])
+        #print(type(dict[class_number]))
+        #request.session['class_name_session'] = dict[class_number]
+        #print(request.session['class_name_session'])
         #getting the value of the class
         request.session['class'] = class_number
 
@@ -841,11 +932,10 @@ def Check_Booking_jump(request, session):
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
                             finish = context[key]['finish']
-                            email_user = 'ferreirajackson.96@gmail.com'
+                            email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the JUMP session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
-                            send_mail('CCFIT JUMP CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
-
+                            send_mail('CCFIT Jump CLASS - Booking Confirmation', message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
             context = {'response': 'Confirmed'}
             booking.save()
         else:
@@ -887,7 +977,7 @@ def Check_Booking_spin(request, session):
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
                             finish = context[key]['finish']
-                            email_user = 'ferreirajackson.96@gmail.com'
+                            email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Spin session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Spin CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
@@ -932,7 +1022,7 @@ def Check_Booking_yoga(request, session):
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
                             finish = context[key]['finish']
-                            email_user = 'ferreirajackson.96@gmail.com'
+                            email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Yoga session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Yoga CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
@@ -977,7 +1067,7 @@ def Check_Booking_pilates(request, session):
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
                             finish = context[key]['finish']
-                            email_user = 'ferreirajackson.96@gmail.com'
+                            email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Pilates session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Pilates CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
@@ -1021,7 +1111,7 @@ def Check_Booking_workout(request, session):
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
                             finish = context[key]['finish']
-                            email_user = 'ferreirajackson.96@gmail.com'
+                            email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Workout session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Workout CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)

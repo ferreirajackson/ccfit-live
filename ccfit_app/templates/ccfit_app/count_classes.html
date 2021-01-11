@@ -2,6 +2,7 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
     <h1>WELCOME TO COUNT CLASSES {{title}}</h1>
+    <a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
 
 
     {% if session_1.enable %}
@@ -44,5 +45,6 @@
       <b>{{session_6.start}} - {{session_6.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=6 %}'" name="button">{{session_6.6}}</button>
     </div>
     {% endif %}
-
+    <a class="btn btn-info" href="{% url 'ccfit_app:pdf_view' %}" target="_blank">View schedule</a>
+    <a class="btn btn-info"  href="{% url 'ccfit_app:pdf_download' %}">Download schedule</a>
 {% endblock %}

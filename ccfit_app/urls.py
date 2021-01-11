@@ -34,13 +34,15 @@ urlpatterns = [
     url(r'jump/verification/', views.Check_Booking_jump, name='check_booking_jump'),
     url(r"signup/$", views.create_user, name="signup"),
     url(r'allUsers/', views.UsersListView.as_view(), name='all_users'),
-    url(r'management/(?P<pk>\d)', views.UsersUpdateView.as_view(), name='update_user'),
+    url(r'management/(?P<pk>\d+)', views.UsersUpdateView.as_view(), name='update_user'),
     url(r'check_classes/session/', views.Validate_date_check, name='validates_check'),
     url(r"check_classes/$", views.CheckingPage, name="check_classes"),
     url(r'check_classes/change/(?P<class_number>\d)', views.ClassesCountView, name='classes_count'),
     url(r'class/(?P<session>\d)', views.Check_Class_Amount, name='check_class_amount'),
     url(r'my_bookings/', views.MyBookings, name='my_bookings'),
-    url(r'pdf_view/', views.ViewPDF.as_view(), name="pdf_view"),
+    url(r'pdf_view/', views.PDF.as_view(), name="pdf_view"),
     url(r'pdf_download/', views.DownloadPDF.as_view(), name="pdf_download"),
+    url(r'payment/', views.Payment, name="payment"),
+    url(r'payment_request/', views.Payment_request, name="payment_request"),
 
 ]

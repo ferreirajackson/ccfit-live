@@ -152,8 +152,8 @@ LOGOUT_REDIRECT_URL = "login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'ca2mailer2020@gmail.com'
-EMAIL_HOST_PASSWORD = 'CCT1234!'
+EMAIL_HOST_USER = 'joejonesccfit@gmail.com'
+EMAIL_HOST_PASSWORD = 'ccfit1234!'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'

@@ -27,6 +27,7 @@
     {% if type == 'USER' %}
     <p>USER</p>
     <p><a href="{% url 'ccfit_app:my_bookings' %}">CHECK PREVIOUS BOOKINGS</a></p>
+    <p><a href="{% url 'ccfit_app:payment' %}">PAYMENT SECTION</a></p>
     {% elif type == 'TEACHER'  %}
     <p>TEACHER</p>
     <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
