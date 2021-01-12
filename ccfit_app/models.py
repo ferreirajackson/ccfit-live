@@ -134,8 +134,8 @@ class Invoice(models.Model):
     email = models.EmailField(max_length=80,null=True)
     from_date = models.DateField(null=True)
     to_date = models.DateField(null=True)
-    ano = models.IntegerField(null=True)
-    valor = models.IntegerField(null=True)
+    year = models.IntegerField(null=True)
+    cost = models.IntegerField(null=True)
     type = models.CharField(max_length=30, choices = TYPE, null=True)
     status = models.CharField(max_length=15, choices = STATUS, null=True)
 

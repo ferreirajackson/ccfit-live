@@ -88,6 +88,34 @@ class ViewPDF(View):
         return HttpResponse(pdf, content_type='application/pdf')
 
 
+class InvoiceUser(View):
+	def get(self, request, *args, **kwargs):
+		print('firts thing print pk')
+		#print(pk)
+		self.kwargs['pk']
+		print(self.kwargs['pk'])
+		new = Invoice.objects.filter(pk=self.kwargs['pk'])
+		if new.exists():
+			for unit in new:
+				print(unit.email, 'this')
+				print(unit.from_date, 'this')
+				print(unit.to_date, 'this')
+				print(unit.year, 'this')
+				print(unit.cost, 'this')
+				print(unit.type, 'this')
+				print(unit.status, 'this')
+
+				d1 = {'email': unit.email, 'from_date': str(unit.from_date), 'to_date': str(unit.to_date), 'cost': unit.cost, 'type': unit.type}
+		else:
+			print("DIDNT FIND", num)
+		print('HERE I WANT TO SEE THE RESULT OF THE DICT AND LIST')
+		print(d1)
+		print('**********************************************************************************')
+		pdf = render_to_pdf('ccfit_app/invoice_template.html', d1)
+
+		return HttpResponse(pdf, content_type='application/pdf')
+
+
 class PDF(View):
 	def get(self, request, *args, **kwargs):
 		print(request.session['value'])
@@ -1194,8 +1222,8 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
             currentYear = int(datetime.now().year)
             p = Invoice(email=profile.email,
             			 from_date=today_date_object,
-            			 ano=currentYear,
-            			 valor=30,
+            			 year=currentYear,
+            			 cost=30,
             			 type="ENROLLMENT FEE",
             			 status="GENERATE")
             p.save(force_insert=True)

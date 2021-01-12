@@ -45,5 +45,6 @@ urlpatterns = [
     url(r'payment/', views.Payment, name="payment"),
     url(r'payment_request/', views.Payment_request, name="payment_request"),
     url(r'invoices/', views.InvoiceListView.as_view(), name="invoices"),
+    url(r'invoice_user/(?P<pk>\d+)', views.InvoiceUser.as_view(), name="invoice_user"),
 
 ]

@@ -25,6 +25,8 @@
         		        {% endif %}
     </ul>
     {% if type == 'USER' %}
+    {% if enrollment == 'PAID' %}
+    {% endif %}
     <p>USER</p>
     <p><a href="{% url 'ccfit_app:my_bookings' %}">CHECK PREVIOUS BOOKINGS</a></p>
     <p><a href="{% url 'ccfit_app:payment' %}">PAYMENT SECTION</a></p>

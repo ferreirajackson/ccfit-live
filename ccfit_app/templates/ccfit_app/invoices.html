@@ -17,8 +17,8 @@
           <th style="min-width:20px">email</th>
           <th style="min-width:110px">from date</th>
           <th style="min-width:80px">to date</th>
-          <th style="min-width:80px">ano</th>
-          <th style="min-width:80px">valor</th>
+          <th style="min-width:80px">year</th>
+          <th style="min-width:80px">cost</th>
           <th style="min-width:80px">type</th>
           <th style="min-width:80px">status</th>
 
@@ -30,17 +30,22 @@
           <td>{{ invoice.email }}</td>
           <td>{{ invoice.from_date }}</td>
           <td>{{ invoice.to_date }}</td>
-          <td>{{ invoice.ano }}</td>
-          <td>{{ invoice.valor }}</td>
+          <td>{{ invoice.year }}</td>
+          <td>{{ invoice.cost }}</td>
           <td>{{ invoice.type }}</td>
           <td>{{ invoice.status }}</td>
           <td>
           <div align="center">
-              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"  title="Editar informações do cliente">
-                <span class="fa fa-edit"></span>
+              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
+                <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">View Invoice</a>
               </button>
+              {% if invoice.type == 'MONTHLY PAYMENT' %}
               <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"  title="Editar informações do cliente">
-                <span class="fa fa-edit"></span>
+                <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">SENT TO USER</a>
+              </button>
+              {% endif %}
+              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
+                <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">MARK AS PAID</a>
               </button>
           </div>
         </td>
