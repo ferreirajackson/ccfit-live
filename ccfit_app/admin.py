@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ccfit_app.models import UserProfileInfo, Workout, Jump, Yoga, Pilates, Spin, MaxSession
+from ccfit_app.models import UserProfileInfo, Workout, Jump, Yoga, Pilates, Spin, MaxSession, Invoice
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.utils.translation import ugettext_lazy as _
@@ -29,6 +29,7 @@ class UserAdmin(DjangoUserAdmin):
 
 
 admin.site.register(UserProfileInfo)
+admin.site.register(Invoice)
 admin.site.register(Workout)
 admin.site.register(Pilates)
 admin.site.register(Spin)

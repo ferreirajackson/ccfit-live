@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, redirect
 from django.http import HttpResponse
-from .models import Workout, UserProfileInfo, Pilates, Yoga, Spin, Jump, User, MaxSession
+from .models import Workout, UserProfileInfo, Pilates, Yoga, Spin, Jump, User, MaxSession, Invoice
 from django.contrib.auth.decorators import login_required
 from . import forms
 from django.views import generic
@@ -50,6 +50,14 @@ def Payment_request(request):
 
 def Payment(request):
     return render(request, 'ccfit_app/payment.html')
+
+
+class InvoiceListView(LoginRequiredMixin, ListView):
+	print('TESTING')
+	template_name = "ccfit_app/invoices.html"
+	model = Invoice
+	context_object_name = "invoices"
+
 
 
 def render_to_pdf(template_src, context_dict={}):
@@ -1160,6 +1168,12 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
 
     def get(self, request, pk):
         print(pk, 've se imprime pkkkkkkkkkkkkkk')
+        #currentYear = int(datetime.now().year)
+        #print(currentYear)
+        #print(type(currentYear))
+        #date = today_date = datetime.today().strftime('%Y-%m-%d')
+        #print(date)
+        #print(type(date))
         obj = get_object_or_404(UserProfileInfo, pk = pk)
         form = ProfilePageForm(instance = obj)
         return render(request, 'ccfit_app/edit_profile_page.html', {
@@ -1175,6 +1189,16 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
             print('got here')
             profile = form.save(commit=False)
             profile.registration_completed = True
+            today_date = datetime.today().strftime('%Y-%m-%d')
+            today_date_object = datetime.strptime(today_date, '%Y-%m-%d').date()
+            currentYear = int(datetime.now().year)
+            p = Invoice(email=profile.email,
+            			 from_date=today_date_object,
+            			 ano=currentYear,
+            			 valor=30,
+            			 type="ENROLLMENT FEE",
+            			 status="GENERATE")
+            p.save(force_insert=True)
             profile.save()
             return HttpResponseRedirect(reverse_lazy('ccfit:index'))
         else:
@@ -1255,7 +1279,6 @@ def index(request):
             registered = course.registration_completed
     mydict = {'type': value_type, 'registration': registered}
     return render(request, 'ccfit_app/index.html', mydict)
-
 
 
 class UsersListView(LoginRequiredMixin, ListView):

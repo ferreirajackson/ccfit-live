@@ -75,6 +75,11 @@ class UserProfileInfo(models.Model):
     ('ALL CLASSES','ALL CLASSES'),
     )
 
+    TYPE_MEMBERSHIP = (
+    ('WORKOUT ONLY','WORKOUT ONLY'),
+    ('ALL CLASSES','ALL CLASSES'),
+    )
+
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     email = models.EmailField(max_length=80,null=True)
     nickname = models.CharField(max_length=50,null=True)
@@ -89,6 +94,7 @@ class UserProfileInfo(models.Model):
     prefix = models.CharField(max_length=4,null=True)
     phone = models.CharField(max_length=10,null=True)
     registration_completed = models.BooleanField(default=False)
+    membership = models.CharField(max_length=15, choices = TYPE_MEMBERSHIP, null=True)
 
 
 
@@ -111,6 +117,30 @@ class MaxSession(models.Model):
     def __str__(self):
         return self.description
 
+
+class Invoice(models.Model):
+
+    TYPE = (
+    ('ENROLLMENT FEE','ENROLLMENT FEE'),
+    ('MONTHLY PAYMENT','MONTHLY PAYMENT'),
+    )
+
+    STATUS = (
+    ('GENERATE','GENERATE'),
+    ('REQUESTED','REQUESTED'),
+    ('PAID','PAID'),
+    )
+
+    email = models.EmailField(max_length=80,null=True)
+    from_date = models.DateField(null=True)
+    to_date = models.DateField(null=True)
+    ano = models.IntegerField(null=True)
+    valor = models.IntegerField(null=True)
+    type = models.CharField(max_length=30, choices = TYPE, null=True)
+    status = models.CharField(max_length=15, choices = STATUS, null=True)
+
+    def __str__(self):
+        return str(self.email)
 
 class Workout(models.Model):
     date = models.DateField(null=True)

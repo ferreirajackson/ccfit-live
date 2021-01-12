@@ -44,5 +44,6 @@ urlpatterns = [
     url(r'pdf_download/', views.DownloadPDF.as_view(), name="pdf_download"),
     url(r'payment/', views.Payment, name="payment"),
     url(r'payment_request/', views.Payment_request, name="payment_request"),
+    url(r'invoices/', views.InvoiceListView.as_view(), name="invoices"),
 
 ]

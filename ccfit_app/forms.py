@@ -42,7 +42,7 @@ class ProfilePageForm(forms.ModelForm):
 
     class Meta:
         model = UserProfileInfo
-        fields = ('nickname', 'gender', 'birth_date', 'address1', 'address2', 'county', 'country', 'prefix', 'phone')
+        fields = ('nickname', 'gender', 'birth_date', 'address1', 'address2', 'county', 'country', 'prefix', 'phone', 'membership')
 
 
 class EditProfileForm(UserChangeForm):
