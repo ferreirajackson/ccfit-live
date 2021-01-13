@@ -25,11 +25,12 @@
         		        {% endif %}
     </ul>
     {% if type == 'USER' %}
-    {% if enrollment == 'PAID' %}
+    {% if status == 'GENERATE' %}
+    <p><a href="{% url 'ccfit_app:payment' type=1 %}">PAYMENT ENROLLMENT</a></p>
     {% endif %}
     <p>USER</p>
     <p><a href="{% url 'ccfit_app:my_bookings' %}">CHECK PREVIOUS BOOKINGS</a></p>
-    <p><a href="{% url 'ccfit_app:payment' %}">PAYMENT SECTION</a></p>
+    <p><a href="{% url 'ccfit_app:payment' type=2 %}">PAYMENT MONTHLY SECTION</a></p>
     {% elif type == 'TEACHER'  %}
     <p>TEACHER</p>
     <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>

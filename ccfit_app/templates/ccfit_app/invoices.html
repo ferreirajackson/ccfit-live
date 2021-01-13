@@ -45,7 +45,7 @@
               </button>
               {% endif %}
               <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">MARK AS PAID</a>
+                <a class="btn btn-info" href="{% url 'ccfit_app:mark_paid' invoice.pk %}">MARK AS PAID</a>
               </button>
           </div>
         </td>

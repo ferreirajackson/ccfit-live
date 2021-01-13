@@ -11,7 +11,7 @@ from django.urls import reverse_lazy, reverse
 from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import CreateView, UpdateView, TemplateView, ListView, View
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
@@ -27,8 +27,28 @@ from xhtml2pdf import pisa
 stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1x6BJ5yOpPik2qct0yNaewqrLNerI7oQbdLf00Oyz3Ulph'
 
 def Payment_request(request):
-
-	amount = 5
+	print(request.session['type_payment'])
+	print(type(request.session['type_payment']))
+	if request.session['type_payment'] == '1':
+		amount = 30
+		description = 'enrollment fee'
+	else:
+		# ADICIONAR AQUI A OPÇÃO DE PAGAMENTO PARA WORKOUT ONLY = 35
+		# pegar todas as infos daqui tbm
+		# **************************************************************************************
+		# user = UserProfileInfo.objects.get(email=request.user)
+		# if user.active == 'ALL CLASSES':
+		# 	amount = 50
+		# elif user.active == 'WORKOUT ONLY':
+		# 	amount = 35
+		#
+		# else:
+		# 	print('It wasnt possible to finish the transaction')
+		# # **************************************************************************************
+		# amount = 50
+		# description = 'monthly payment'
+		pass
+	print(amount)
 	if request.method == 'POST':
 		print('Data:', request.POST)
 
@@ -43,12 +63,43 @@ def Payment_request(request):
 			customer=customer,
 			amount=amount*100,
 			currency='eur',
-			description='Donation',
+			description=description,
 		)
+
+		#UPDATING STATUS E DATAS
+		if request.session['type_payment'] == '1':
+			verify_enrollment = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+			# user = UserProfileInfo.objects.get(email=request.user)
+			today_date = datetime.today().strftime('%Y-%m-%d')
+			today_date_object = datetime.strptime(today_date, '%Y-%m-%d').date()
+			future_30days = str(today_date_object + timedelta(days = 30))
+			future_30days_DATE = datetime.strptime(future_30days, '%Y-%m-%d').date()
+			print(future_30days_DATE, 'future_30days_DATE')
+			verify_enrollment.from_date = today_date_object
+			verify_enrollment.to_date = future_30days_DATE
+			verify_enrollment.status = 'PAID'
+			verify_enrollment.save()
+		elif request.session['type_payment'] == '2':
+			# verificar qual a chave certa para fazer essar busca e pegar apenas um registro
+			verify_enrollment = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+			# user = UserProfileInfo.objects.get(email=request.user)
+			verify_enrollment.status = 'PAID'
+			verify_enrollment.save()
+		else:
+			pass
 	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 
+def MarkPaid(request, pk):
+	print('testing')
+	print('testing ', pk )
+	verify_enrollment = Invoice.objects.get(pk=pk)
+	verify_enrollment.status = 'PAID'
+	verify_enrollment.save()
+	return HttpResponseRedirect(reverse_lazy('ccfit:invoices'))
 
-def Payment(request):
+def Payment(request, type):
+    request.session['type_payment'] = type
+    print(request.session['type_payment'])
     return render(request, 'ccfit_app/payment.html')
 
 
@@ -1121,6 +1172,7 @@ def Check_Booking_workout(request, session):
     if cancel.exists():
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
+		# DO THE SUBTRACTION OF THE TABLE FROM HERE
         context = {'response': 'cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
@@ -1143,6 +1195,25 @@ def Check_Booking_workout(request, session):
                             'session_5': { 'start':'18:00', 'finish':'20:00', 'session_number': 5,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_6': { 'start':'21:00', 'finish':'23:00', 'session_number': 6,  'expired':True, 'status':'BOOK', 'enable':False}}
 
+                    #DO THE INVOICE INSERTION
+                    verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT')
+                    print(verify_enrollment)
+                    if not verify_enrollment.exists():
+                        user = UserProfileInfo.objects.get(email=request.user)
+                        print(user.membership)
+                        cost = 35
+                        if user.membership == 'WORKOUT ONLY':
+                            cost = 35
+                        else:
+                            cost = 50
+                        verify = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+                        p = Invoice(email=request.user,from_date=verify.from_date,to_date=verify.to_date,year=verify.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+                        p.save(force_insert=True)
+                    #else:
+                    #    passworddd=1
+                    #    verify_enrollment = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+                    #    verify_enrollment.status = 'PAID'
+                    #    verify_enrollment.save()
                     for key in context:
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
@@ -1217,16 +1288,25 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
             print('got here')
             profile = form.save(commit=False)
             profile.registration_completed = True
+            profile.active = profile.membership
             today_date = datetime.today().strftime('%Y-%m-%d')
             today_date_object = datetime.strptime(today_date, '%Y-%m-%d').date()
             currentYear = int(datetime.now().year)
-            p = Invoice(email=profile.email,
-            			 from_date=today_date_object,
-            			 year=currentYear,
-            			 cost=30,
-            			 type="ENROLLMENT FEE",
-            			 status="GENERATE")
-            p.save(force_insert=True)
+            verify_enrollment = Invoice.objects.filter(email=profile.email, type='ENROLLMENT FEE')
+			# future_30days = str(today_date_object + stimedelta(days = 30))
+            future_30days=str(today_date_object + timedelta(days = 30))
+            print(future_30days, 'future_30days')
+            future_30days = datetime.strptime(future_30days, '%Y-%m-%d').date()
+			# print(future_30days, 'future_30days')
+            if not verify_enrollment.exists():
+	            p = Invoice(email=profile.email,
+	            			 from_date=today_date_object,
+							 to_date=future_30days,
+	            			 year=currentYear,
+	            			 cost=30,
+	            			 type="ENROLLMENT FEE",
+	            			 status="GENERATE")
+	            p.save(force_insert=True)
             profile.save()
             return HttpResponseRedirect(reverse_lazy('ccfit:index'))
         else:
@@ -1298,14 +1378,23 @@ class EditProfile(LoginRequiredMixin, generic.UpdateView):
 
 @login_required
 def index(request):
+	#user info
     user = UserProfileInfo.objects.filter(email=request.user)
     value_type = 'USER'
     registered = False
+    status = 'PAID'
     if user.exists():
         for course in user:
             value_type = course.type
             registered = course.registration_completed
-    mydict = {'type': value_type, 'registration': registered}
+
+	#invoice info
+    verify_enrollment = Invoice.objects.filter(email=request.user, type='ENROLLMENT FEE')
+    if verify_enrollment.exists():
+        for course in verify_enrollment:
+            print(course.status)
+            status = course.status
+    mydict = {'type': value_type, 'registration': registered, 'status': status}
     return render(request, 'ccfit_app/index.html', mydict)
 
 
@@ -1362,6 +1451,9 @@ class UsersUpdateView(LoginRequiredMixin, UpdateView):
             print('esse teste user')
             system_user.save()
             profile = form.save(commit=False)
+            print(profile.membership, 'profile.membership')
+            print(profile.active, 'profile.active')
+            profile.membership = profile.active
             profile.save()
             return HttpResponseRedirect(reverse_lazy('ccfit:all_users'))
         else:

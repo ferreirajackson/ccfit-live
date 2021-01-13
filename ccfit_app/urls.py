@@ -42,9 +42,10 @@ urlpatterns = [
     url(r'my_bookings/', views.MyBookings, name='my_bookings'),
     url(r'pdf_view/', views.PDF.as_view(), name="pdf_view"),
     url(r'pdf_download/', views.DownloadPDF.as_view(), name="pdf_download"),
-    url(r'payment/', views.Payment, name="payment"),
+    url(r'payment/(?P<type>\d)', views.Payment, name="payment"),
     url(r'payment_request/', views.Payment_request, name="payment_request"),
     url(r'invoices/', views.InvoiceListView.as_view(), name="invoices"),
     url(r'invoice_user/(?P<pk>\d+)', views.InvoiceUser.as_view(), name="invoice_user"),
+    url(r'status/(?P<pk>\d+)', views.MarkPaid, name="mark_paid"),
 
 ]
