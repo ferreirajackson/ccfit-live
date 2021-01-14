@@ -97,6 +97,18 @@ def MarkPaid(request, pk):
 	verify_enrollment.save()
 	return HttpResponseRedirect(reverse_lazy('ccfit:invoices'))
 
+def SendInvoice(request, pk):
+	print('testing SEND INVOICE')
+	print('testing ', pk )
+	verify_enrollment = Invoice.objects.get(pk=pk)
+	verify_enrollment.status = 'REQUESTED'
+	verify_enrollment.save()
+	email_user = str(verify_enrollment.email)
+	print(email_user)
+	message = 'Dear ' + str(verify_enrollment.email) + '\nThank you for trusting CCFIT to be your gym. \nYour invoice for this month is now availabe.' + ' \nCheck on https://ccfitgym.herokuapp.com/ to pay'
+	send_mail('CCFIT Invoice: ' + str(verify_enrollment.from_date) + ' - ' + str(verify_enrollment.to_date), message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
+	return HttpResponseRedirect(reverse_lazy('ccfit:invoices'))
+
 def Payment(request, type):
     request.session['type_payment'] = type
     print(request.session['type_payment'])
@@ -1163,7 +1175,7 @@ def Check_Booking_spin(request, session):
                             email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Spin session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
-                            send_mail('CCFIT Spin CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
+                            send_mail('CCFIT Spin CLASS - Booking Confirmation', message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
             context = {'response': 'Confirmed'}
             booking.save()
         else:
@@ -1210,7 +1222,7 @@ def Check_Booking_yoga(request, session):
                             email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Yoga session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
-                            send_mail('CCFIT Yoga CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
+                            send_mail('CCFIT Yoga CLASS - Booking Confirmation', message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
             context = {'response': 'Confirmed'}
             booking.save()
         else:
@@ -1257,7 +1269,7 @@ def Check_Booking_pilates(request, session):
                             email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Pilates session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
-                            send_mail('CCFIT Pilates CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
+                            send_mail('CCFIT Pilates CLASS - Booking Confirmation', message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
             context = {'response': 'Confirmed'}
             booking.save()
         else:
@@ -1333,7 +1345,7 @@ def Check_Booking_workout(request, session):
                             email_user = str(request.user)
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Workout session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
-                            send_mail('CCFIT Workout CLASS - Booking Confirmation', message, 'ca2mailer2020@gmail.com', [email_user], fail_silently=False)
+                            send_mail('CCFIT Workout CLASS - Booking Confirmation', message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
             context = {'response': 'Confirmed'}
             booking.save()
         else:
@@ -1495,6 +1507,7 @@ def index(request):
     value_type = 'USER'
     registered = False
     status = 'PAID'
+    status_mp = 'GENERATE'
     if user.exists():
         for course in user:
             value_type = course.type
@@ -1506,7 +1519,12 @@ def index(request):
         for course in verify_enrollment:
             print(course.status)
             status = course.status
-    mydict = {'type': value_type, 'registration': registered, 'status': status}
+    verify_enrollment_MP = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT')
+    if verify_enrollment_MP.exists():
+        for course in verify_enrollment_MP:
+            print(course.status)
+            status_mp = course.status
+    mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp}
     return render(request, 'ccfit_app/index.html', mydict)
 
 

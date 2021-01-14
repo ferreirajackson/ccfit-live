@@ -47,5 +47,6 @@ urlpatterns = [
     url(r'invoices/', views.InvoiceListView.as_view(), name="invoices"),
     url(r'invoice_user/(?P<pk>\d+)', views.InvoiceUser.as_view(), name="invoice_user"),
     url(r'status/(?P<pk>\d+)', views.MarkPaid, name="mark_paid"),
+    url(r'send_invoice/(?P<pk>\d+)', views.SendInvoice, name="send_invoice"),
 
 ]

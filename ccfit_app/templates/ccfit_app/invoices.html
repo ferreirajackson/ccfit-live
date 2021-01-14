@@ -41,7 +41,7 @@
               </button>
               {% if invoice.type == 'MONTHLY PAYMENT' %}
               <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"  title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">SENT TO USER</a>
+                <a class="btn btn-info" href="{% url 'ccfit_app:send_invoice' invoice.pk %}">SENT TO USER</a>
               </button>
               {% endif %}
               <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
