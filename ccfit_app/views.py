@@ -981,6 +981,99 @@ class JumpView(LoginRequiredMixin, generic.TemplateView):
             print(context)
         return context
 
+def cancelling_allclases(request):
+    print('it got into the cancelling_allclases function', request)
+    program_date = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
+    print(program_date)
+    print('cancellllllllllllllling')
+    invoice = Invoice.objects.get(email=request.user, from_date__lte=program_date, to_date__gte=program_date, type="MONTHLY PAYMENT")
+    models = [Workout, Pilates, Spin, Yoga, Jump]
+    found_other_bookings = True
+    for model in models:
+        number_bookings = model.objects.filter(email_user=request.user, date__gte=invoice.from_date)
+        print(number_bookings, 'number_bookingsssssssssssssssssssssssssssss', str(model))
+        if number_bookings.exists():
+            print('FIRST LOOP')
+            number_bookings = model.objects.filter(email_user=request.user, date__lte=invoice.to_date)
+            if number_bookings.exists():
+                print('BOOKING FOUNDDDDDDDDDDDDDDDDDDDDDD D D D D D D D D D D D D ')
+                print(str(model))
+                found_other_bookings = False
+                break
+    if found_other_bookings == True:
+        print('DELETED THE VALUEEEEE')
+        invoice.delete()
+
+def invoice_insertion(request):
+	#DO THE INVOICE INSERTION
+	print('it got here', request)
+	verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT')
+	print(verify_enrollment)
+	if not verify_enrollment.exists():
+		user = UserProfileInfo.objects.get(email=request.user)
+		print(user.membership)
+		cost = 35
+		if user.active == 'WORKOUT ONLY':
+			cost = 35
+		else:
+			cost = 50
+		verify = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+		p = Invoice(email=request.user,from_date=verify.from_date,to_date=verify.to_date,year=verify.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+		p.save(force_insert=True)
+	else:
+		today_date_object = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
+		currentYear = int(datetime.now().year)
+		print(request.user)
+		print(today_date_object)
+		print(currentYear)
+		verify_month = Invoice.objects.filter(email=request.user, from_date__lte=today_date_object, to_date__gte=today_date_object, type="MONTHLY PAYMENT", year=currentYear)
+		print(verify_month)
+		if verify_month.exists():
+			# DOESNT DO ANYTHING
+			# ONLY CHECKS IF THE USER CHANGED THE enrollment
+			# FROM WORKOUT ONLY TO ALL CLASSES
+			user = UserProfileInfo.objects.get(email=request.user)
+			if user.active == 'ALL CLASSES':
+				update_invoice = Invoice.objects.get(email=request.user, from_date__lte=today_date_object, to_date__gte=today_date_object, type="MONTHLY PAYMENT", year=currentYear)
+				update_invoice.cost = 50
+				update_invoice.save()
+			print('verying if the range is correcccccccccccccccct')
+		else:
+			flag_found = True
+			dates = Invoice.objects.get(email=request.user, type="ENROLLMENT FEE")
+			year = dates.year
+			to_date_invoice = dates.to_date
+			while flag_found:
+				#GETS THE ENROLLMENT DATE AS A PARAMETER TO MAKE THE COUNTING FOR FINDING OUT THE NEW MONTH
+				#from_30days = str(dates.from_date + timedelta(days = 30))
+				from_1day = str(to_date_invoice + timedelta(days = 1))
+				from_sameday = datetime.strptime(from_1day, '%Y-%m-%d').date()
+				print(from_sameday, 'from_sameday')
+				print(type(from_sameday))
+				to_30days = str(from_sameday + timedelta(days = 30))
+				to_30d_date = datetime.strptime(to_30days, '%Y-%m-%d').date()
+				print(to_30d_date, 'to_30d_date')
+				print(type(to_30d_date))
+				date_booked = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
+				print(date_booked, 'date_booked')
+				if date_booked >= from_sameday and date_booked <= to_30d_date:
+					print('FOUUUUUUUUUUUUUUUNNNNNnnnnnnnnnnnnnnnnnnnnnnnnnnnnnNNNNNNNNND')
+					user = UserProfileInfo.objects.get(email=request.user)
+					cost = 35
+					if user.active == 'WORKOUT ONLY':
+						cost = 35
+					else:
+						cost = 50
+					p = Invoice(email=request.user,from_date=from_sameday,to_date=to_30d_date,year=year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+					p.save(force_insert=True)
+					flag_found = False
+				else:
+					print('KEEEP LOOOOOOOOOOoooooooooooooooooooooooooooooooooooooooooOOPIG')
+					print(to_date_invoice)
+					print(to_date_invoice)
+					to_date_invoice = to_30d_date
+			print('verying if the range is WROOOOOOOOOOOONGGGGGG')
+
 
 @login_required
 def Check_Booking_jump(request, session):
@@ -989,6 +1082,7 @@ def Check_Booking_jump(request, session):
     if cancel.exists():
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
+        cancelling_allclases(request)
         context = {'response': 'cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
@@ -1014,7 +1108,7 @@ def Check_Booking_jump(request, session):
                             'session_4': { 'start':'15:00', 'finish':'17:00', 'session_number': 4,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_5': { 'start':'18:00', 'finish':'20:00', 'session_number': 5,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_6': { 'start':'21:00', 'finish':'23:00', 'session_number': 6,  'expired':True, 'status':'BOOK', 'enable':False}}
-
+                    invoice_insertion(request)
                     for key in context:
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
@@ -1038,6 +1132,7 @@ def Check_Booking_spin(request, session):
     if cancel.exists():
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
+        cancelling_allclases(request)
         context = {'response': 'cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
@@ -1059,7 +1154,8 @@ def Check_Booking_spin(request, session):
                             'session_4': { 'start':'15:00', 'finish':'17:00', 'session_number': 4,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_5': { 'start':'18:00', 'finish':'20:00', 'session_number': 5,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_6': { 'start':'21:00', 'finish':'23:00', 'session_number': 6,  'expired':True, 'status':'BOOK', 'enable':False}}
-
+                    invoice_insertion(request)
+                    print('call the spin hereeeeeeeeeeeee')
                     for key in context:
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
@@ -1083,6 +1179,7 @@ def Check_Booking_yoga(request, session):
     if cancel.exists():
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
+        cancelling_allclases(request)
         context = {'response': 'cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
@@ -1105,6 +1202,7 @@ def Check_Booking_yoga(request, session):
                             'session_5': { 'start':'18:00', 'finish':'20:00', 'session_number': 5,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_6': { 'start':'21:00', 'finish':'23:00', 'session_number': 6,  'expired':True, 'status':'BOOK', 'enable':False}}
 
+                    invoice_insertion(request)
                     for key in context:
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
@@ -1128,6 +1226,7 @@ def Check_Booking_pilates(request, session):
     if cancel.exists():
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
+        cancelling_allclases(request)
         context = {'response': 'cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
@@ -1150,6 +1249,7 @@ def Check_Booking_pilates(request, session):
                             'session_5': { 'start':'18:00', 'finish':'20:00', 'session_number': 5,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_6': { 'start':'21:00', 'finish':'23:00', 'session_number': 6,  'expired':True, 'status':'BOOK', 'enable':False}}
 
+                    invoice_insertion(request)
                     for key in context:
                         if session == str(context[key]['session_number']):
                             start = context[key]['start']
@@ -1163,6 +1263,8 @@ def Check_Booking_pilates(request, session):
         else:
             context = {'response': 'YOU CANNOT BOOK'}
         return render(request, 'ccfit_app/confirmation.html', context)
+
+
 
 
 @login_required
@@ -1190,26 +1292,7 @@ def Check_Booking_workout(request, session):
 	        else:
 	            invoice.delete()
         else:
-            program_date = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
-            print(program_date)
-            print('cancellllllllllllllling')
-            invoice = Invoice.objects.get(email=request.user, from_date__lte=program_date, to_date__gte=program_date, type="MONTHLY PAYMENT")
-            models = [Workout, Pilates, Spin, Yoga, Jump]
-            found_other_bookings = True
-            for model in models:
-                number_bookings = model.objects.filter(email_user=request.user, date__gte=invoice.from_date)
-                print(number_bookings, 'number_bookingsssssssssssssssssssssssssssss', str(model))
-                if number_bookings.exists():
-                    print('FIRST LOOP')
-                    number_bookings = model.objects.filter(email_user=request.user, date__lte=invoice.to_date)
-                    if number_bookings.exists():
-                        print('BOOKING FOUNDDDDDDDDDDDDDDDDDDDDDD D D D D D D D D D D D D ')
-                        print(str(model))
-                        found_other_bookings = False
-                        break
-            if found_other_bookings == True:
-                print('DELETED THE VALUEEEEE')
-                invoice.delete()
+            cancelling_allclases(request)
                 # break
 			# END FOR
 		# DO THE SUBTRACTION OF THE TABLE FROM HERE
@@ -1235,74 +1318,7 @@ def Check_Booking_workout(request, session):
                             'session_5': { 'start':'18:00', 'finish':'20:00', 'session_number': 5,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_6': { 'start':'21:00', 'finish':'23:00', 'session_number': 6,  'expired':True, 'status':'BOOK', 'enable':False}}
 
-                    #DO THE INVOICE INSERTION
-                    verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT')
-                    print(verify_enrollment)
-                    if not verify_enrollment.exists():
-                        user = UserProfileInfo.objects.get(email=request.user)
-                        print(user.membership)
-                        cost = 35
-                        if user.active == 'WORKOUT ONLY':
-                            cost = 35
-                        else:
-                            cost = 50
-                        verify = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
-                        p = Invoice(email=request.user,from_date=verify.from_date,to_date=verify.to_date,year=verify.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
-                        p.save(force_insert=True)
-                    else:
-                        today_date_object = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
-                        currentYear = int(datetime.now().year)
-                        print(request.user)
-                        print(today_date_object)
-                        print(currentYear)
-                        verify_month = Invoice.objects.filter(email=request.user, from_date__lte=today_date_object, to_date__gte=today_date_object, type="MONTHLY PAYMENT", year=currentYear)
-                        print(verify_month)
-                        if verify_month.exists():
-							# DOESNT DO ANYTHING
-							# ONLY CHECKS IF THE USER CHANGED THE enrollment
-							# FROM WORKOUT ONLY TO ALL CLASSES
-                            user = UserProfileInfo.objects.get(email=request.user)
-                            if user.active == 'ALL CLASSES':
-                                update_invoice = Invoice.objects.get(email=request.user, from_date__lte=today_date_object, to_date__gte=today_date_object, type="MONTHLY PAYMENT", year=currentYear)
-                                update_invoice.cost = 50
-                                update_invoice.save()
-                            print('verying if the range is correcccccccccccccccct')
-                        else:
-                            flag_found = True
-                            dates = Invoice.objects.get(email=request.user, type="ENROLLMENT FEE")
-                            year = dates.year
-                            to_date_invoice = dates.to_date
-                            while flag_found:
-								#GETS THE ENROLLMENT DATE AS A PARAMETER TO MAKE THE COUNTING FOR FINDING OUT THE NEW MONTH
-								#from_30days = str(dates.from_date + timedelta(days = 30))
-                                from_1day = str(to_date_invoice + timedelta(days = 1))
-                                from_sameday = datetime.strptime(from_1day, '%Y-%m-%d').date()
-                                print(from_sameday, 'from_sameday')
-                                print(type(from_sameday))
-                                to_30days = str(from_sameday + timedelta(days = 30))
-                                to_30d_date = datetime.strptime(to_30days, '%Y-%m-%d').date()
-                                print(to_30d_date, 'to_30d_date')
-                                print(type(to_30d_date))
-                                date_booked = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
-                                print(date_booked, 'date_booked')
-                                if date_booked >= from_sameday and date_booked <= to_30d_date:
-                                    print('FOUUUUUUUUUUUUUUUNNNNNnnnnnnnnnnnnnnnnnnnnnnnnnnnnnNNNNNNNNND')
-                                    user = UserProfileInfo.objects.get(email=request.user)
-                                    cost = 35
-                                    if user.active == 'WORKOUT ONLY':
-                                        cost = 35
-                                    else:
-                                        cost = 50
-                                    p = Invoice(email=request.user,from_date=from_sameday,to_date=to_30d_date,year=year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
-                                    p.save(force_insert=True)
-                                    flag_found = False
-                                else:
-                                    print('KEEEP LOOOOOOOOOOoooooooooooooooooooooooooooooooooooooooooOOPIG')
-                                    print(to_date_invoice)
-                                    print(to_date_invoice)
-                                    to_date_invoice = to_30d_date
-                            print('verying if the range is WROOOOOOOOOOOONGGGGGG')
-
+                    invoice_insertion(request)
 						# checar primeiro se ja tem invoice pra isso senao gerar um novo
 
                     #else:
