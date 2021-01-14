@@ -47,3 +47,14 @@ def user_workout(view_func):
         else:
             return view_func(request, *args, **kwargs)
     return wrap
+
+def admin_only(view_func):
+    def wrap(request, *args, **kwargs):
+        print('entrou no admin only')
+        print(request.user)
+        user = UserProfileInfo.objects.get(email=request.user)
+        if user.type == 'ADMINISTRATOR':
+            return view_func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrap

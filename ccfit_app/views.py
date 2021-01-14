@@ -15,17 +15,19 @@ from datetime import datetime, timedelta
 import time
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
-from .decorators import user_all_classes, user_workout
+from .decorators import user_all_classes, user_workout, admin_only
 from django.utils.decorators import method_decorator
 from io import BytesIO
 from django.template.loader import get_template
 import stripe
 from xhtml2pdf import pisa
+import os
 
 # Create your views here.
-
+# stripe.api_key = os.environ.get('STRIPE_PRIVATE_KEY')
 stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1x6BJ5yOpPik2qct0yNaewqrLNerI7oQbdLf00Oyz3Ulph'
 
+@login_required
 def Payment_request(request):
 	print(request.session['type_payment'])
 	print(type(request.session['type_payment']))
@@ -103,6 +105,8 @@ def Payment_request(request):
 			pass
 	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 
+@login_required
+@method_decorator(admin_only, name='dispatch')
 def MarkPaid(request, pk):
 	print('testing')
 	print('testing ', pk )
@@ -111,6 +115,9 @@ def MarkPaid(request, pk):
 	verify_enrollment.save()
 	return HttpResponseRedirect(reverse_lazy('ccfit:invoices'))
 
+
+@login_required
+@method_decorator(admin_only, name='dispatch')
 def SendInvoice(request, pk):
 	print('testing SEND INVOICE')
 	print('testing ', pk )
@@ -123,12 +130,14 @@ def SendInvoice(request, pk):
 	send_mail('CCFIT Invoice: ' + str(verify_enrollment.from_date) + ' - ' + str(verify_enrollment.to_date), message, 'joejonesccfit@gmail.com', [email_user], fail_silently=False)
 	return HttpResponseRedirect(reverse_lazy('ccfit:invoices'))
 
+@login_required
 def Payment(request, type):
     request.session['type_payment'] = type
     print(request.session['type_payment'])
     return render(request, 'ccfit_app/payment.html')
 
 
+@method_decorator(admin_only, name='dispatch')
 class InvoiceListView(LoginRequiredMixin, ListView):
 	print('TESTING')
 	template_name = "ccfit_app/invoices.html"
@@ -148,7 +157,8 @@ def render_to_pdf(template_src, context_dict={}):
 
 
 #Opens up page as PDF
-class ViewPDF(View):
+@method_decorator(admin_only, name='dispatch')
+class ViewPDF(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         data = {
             "company": "Display",
@@ -165,7 +175,7 @@ class ViewPDF(View):
         return HttpResponse(pdf, content_type='application/pdf')
 
 
-class InvoiceUser(View):
+class InvoiceUser(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		print('firts thing print pk')
 		#print(pk)
@@ -193,7 +203,7 @@ class InvoiceUser(View):
 		return HttpResponse(pdf, content_type='application/pdf')
 
 
-class PDF(View):
+class PDF(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		print(request.session['value'])
 		dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
@@ -238,7 +248,7 @@ class PDF(View):
 
 
 #Automaticly downloads to PDF file
-class DownloadPDF(View):
+class DownloadPDF(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		print(request.session['value'])
 		dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
@@ -278,6 +288,7 @@ def Confirmation_Booking(request, n1):
     return render(request, 'ccfit_app/confirmation.html', context)
 
 
+@login_required
 def MyBookings(request):
     models = [Workout, Pilates, Spin, Yoga, Jump]
     data = {}
@@ -308,6 +319,7 @@ def MyBookings(request):
 
 
 @login_required
+@admin_only
 def Validate_date_check(request):
     print('IT GOT HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
     if request.is_ajax():
@@ -377,6 +389,7 @@ def Check_Class_Amount(request, session):
 
 
 @login_required
+@admin_only
 def ClassesCountView(request, class_number):
     cancel = User.objects.filter(email=request.user)
     print('CHECKING')
@@ -419,6 +432,7 @@ def ClassesCountView(request, class_number):
 
 
     return render(request, 'ccfit_app/count_classes.html', context)
+
 
 @method_decorator(user_workout, name='dispatch')
 class WorkoutView(LoginRequiredMixin, generic.TemplateView):
@@ -1375,6 +1389,7 @@ def BookingPage(request):
     return render(request, 'ccfit_app/booking_page.html', {'form':form})
 
 @login_required
+@admin_only
 def CheckingPage(request):
     #form_class = ExampleForm
     #success_url = reverse_lazy('ccfit:index')
@@ -1543,7 +1558,7 @@ def index(request):
     mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp}
     return render(request, 'ccfit_app/index.html', mydict)
 
-
+@method_decorator(admin_only, name='dispatch')
 class UsersListView(LoginRequiredMixin, ListView):
     print('TESTING')
     template_name = "ccfit_app/allUsers.html"
@@ -1561,6 +1576,7 @@ class UsersListView(LoginRequiredMixin, ListView):
         return object_list
 
 
+@method_decorator(admin_only, name='dispatch')
 class UsersUpdateView(LoginRequiredMixin, UpdateView):
     print('HEREEEEEEE')
     model = UserProfileInfo
