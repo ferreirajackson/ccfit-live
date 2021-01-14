@@ -152,7 +152,8 @@ LOGOUT_REDIRECT_URL = "login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'joejonesccfit@gmail.com'
+print(os.environ.get('HEROKU_EMAIL'), 'AEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE')
+EMAIL_HOST_USER = os.environ.get('HEROKU_EMAIL')
 EMAIL_HOST_PASSWORD = 'ccfit1234!'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True

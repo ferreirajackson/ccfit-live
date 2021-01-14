@@ -41,11 +41,10 @@ def Payment_request(request):
 			amount = 50
 		elif user.active == 'WORKOUT ONLY':
 			amount = 35
-
 		else:
 			print('It wasnt possible to finish the transaction')
 		# **************************************************************************************
-		amount = 50
+
 		description = 'monthly payment'
 
 	print(amount)
@@ -79,12 +78,27 @@ def Payment_request(request):
 			verify_enrollment.to_date = future_30days_DATE
 			verify_enrollment.status = 'PAID'
 			verify_enrollment.save()
+			user = UserProfileInfo.objects.get(email=request.user)
+			cost = 35
+			if user.active == 'WORKOUT ONLY':
+				cost = 35
+			else:
+				cost = 50
+			p = Invoice(email=verify_enrollment.email,from_date=verify_enrollment.from_date,to_date=verify_enrollment.to_date,year=verify_enrollment.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+			p.save(force_insert=True)
 		elif request.session['type_payment'] == '2':
 			# verificar qual a chave certa para fazer essar busca e pegar apenas um registro
-			verify_enrollment = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+			verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT', status='REQUESTED').order_by('from_date')
+			print(verify_enrollment)
+			if verify_enrollment.exists():
+				for course in verify_enrollment:
+					verify_enrollment_unique = Invoice.objects.get(pk=course.pk)
+					verify_enrollment_unique.status = 'PAID'
+					verify_enrollment_unique.save()
+					break
 			# user = UserProfileInfo.objects.get(email=request.user)
-			verify_enrollment.status = 'PAID'
-			verify_enrollment.save()
+			# verify_enrollment.status = 'PAID'
+			# verify_enrollment.save()
 		else:
 			pass
 	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
@@ -1524,6 +1538,8 @@ def index(request):
         for course in verify_enrollment_MP:
             print(course.status)
             status_mp = course.status
+            if status_mp == 'REQUESTED':
+                break
     mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp}
     return render(request, 'ccfit_app/index.html', mydict)
 
