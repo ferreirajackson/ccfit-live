@@ -53,8 +53,6 @@ def Payment_request(request):
 	if request.method == 'POST':
 		print('Data:', request.POST)
 
-
-
 		customer = stripe.Customer.create(
 			email=request.POST['email'],
 			name=request.POST['nickname'],
@@ -106,7 +104,7 @@ def Payment_request(request):
 	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 
 @login_required
-@method_decorator(admin_only, name='dispatch')
+@admin_only
 def MarkPaid(request, pk):
 	print('testing')
 	print('testing ', pk )
@@ -117,7 +115,7 @@ def MarkPaid(request, pk):
 
 
 @login_required
-@method_decorator(admin_only, name='dispatch')
+@admin_only
 def SendInvoice(request, pk):
 	print('testing SEND INVOICE')
 	print('testing ', pk )

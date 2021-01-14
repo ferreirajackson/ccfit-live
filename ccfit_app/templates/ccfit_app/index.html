@@ -16,7 +16,9 @@
                             <p><a href="{% url 'ccfit_app:create_profile_page' %}">Create profile page</a></p>
                           {% endif %}
                           {% if registration %}
-                            <p><a href="{% url 'ccfit_app:booking_page' %}">Make a booking</a></p>
+                            {% if status == 'PAID' %}
+                              <p><a href="{% url 'ccfit_app:booking_page' %}">Make a booking</a></p>
+                            {% endif %}
                           {% endif %}
         						{% else %}
                           <p><a href="{% url 'ccfit_app:form_name' %}">GO TO FORM PAGE</a></p>
