@@ -39,13 +39,7 @@
   {% csrf_token %}
 
 
-  <select required name="amount" id="amount">
-    <option selected value="5">THATS 5</option>
-    <option value="10">THATS 10</option>
-    <option value="25">THATS 25</option>
-  </select>
-
-  <input required type="text" name="email" placeholder="email...">
+  <input required type="text" name="email" id="email" onblur="checkEmail(this.value)" placeholder="someone@example.com">
   <input required type="text" name="nickname" placeholder="nickname...">
   <div class="form-row">
     <label for="card-element">
@@ -59,9 +53,23 @@
     <div id="card-errors" role="alert"></div>
   </div>
 
-  <button>Submit Payment</button>
+  <button id="payment" disabled>Submit Payment</button>
 </form>
 
+<script>
+function checkEmail(str)
+{
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(!re.test(str)){
+      document.getElementById("payment").disabled = true;
+      alert("Please enter a valid email address");
+    }
+    else {
+      document.getElementById("payment").disabled = false;
+    }
+
+}
+</script>
 
 <script>
     // Create a Stripe client.
