@@ -2,25 +2,25 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
 <h1>THATS THE INVOICE PAGE</h1>
-<a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
+<a href="{% url 'ccfit_app:index' %}">Home</a>
 <p></p>
 
 <form method="GET">
   <div class="input-group-prepend">
-    <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Buscar</button>
+    <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Search</button>
   </div>
   <input type="text" placeholder="Type the email" name="search" id="search">
   <div class="table-responsive">
     <table class="table table-hover border rounded shadow-sm bg-white" id="dataTable" width="100%" cellspacing="0">
       <thead>
         <tr class="bg-primary text-white">
-          <th style="min-width:20px">email</th>
-          <th style="min-width:110px">from date</th>
-          <th style="min-width:80px">to date</th>
-          <th style="min-width:80px">year</th>
-          <th style="min-width:80px">cost</th>
-          <th style="min-width:80px">type</th>
-          <th style="min-width:80px">status</th>
+          <th style="min-width:20px">Email</th>
+          <th style="min-width:110px">From date</th>
+          <th style="min-width:80px">To date</th>
+          <th style="min-width:80px">Year</th>
+          <th style="min-width:80px">Cost</th>
+          <th style="min-width:80px">Type</th>
+          <th style="min-width:80px">Status</th>
 
         </tr>
       </thead>
@@ -41,12 +41,12 @@
               </button>
               {% if invoice.type == 'MONTHLY PAYMENT' and invoice.status == 'GENERATE'  %}
               <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"  title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:send_invoice' invoice.pk %}">SENT TO USER</a>
+                <a class="btn btn-info" href="{% url 'ccfit_app:send_invoice' invoice.pk %}">Send to user</a>
               </button>
               {% endif %}
               {% if invoice.status != 'PAID'  %}
               <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:mark_paid' invoice.pk %}">MARK AS PAID</a>
+                <a class="btn btn-info" href="{% url 'ccfit_app:mark_paid' invoice.pk %}">Mark as paid</a>
               </button>
               {% endif %}
           </div>

@@ -3,9 +3,22 @@
 {% block body_block %}
     <h1>WELCOME TO CLASS AMOUNT </h1>
 
+    <h5>List of users for this section:</h5>
+    <table>
+        <tr>
+            <td>email</td>
+            <td>name</td>
+            <td>class type</td>
+        </tr>
 
-    {% for k in emails %}
-        <p>{{ k }}</p>
-    {% endfor %}
+        {% for key, values in data.items %}
+        <tr>
+            <td>{{key}}</td>
+            {% for v in values %}
+            <td>{{v}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
 
 {% endblock %}

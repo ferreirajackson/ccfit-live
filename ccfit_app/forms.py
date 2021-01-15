@@ -95,7 +95,16 @@ class UserProfileInfoFormUsers(forms.ModelForm):
         model = UserProfileInfo
         fields = [
                 'type',
-                'active'
+                'active',
+                'nickname',
+                'gender',
+                'birth_date',
+                'address1',
+                'address2',
+                'county',
+                'country',
+                'prefix',
+                'phone',
             ]
     def __init__(self, *args, **kwargs):
         super(UserProfileInfoFormUsers, self).__init__(*args, **kwargs)

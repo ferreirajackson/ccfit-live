@@ -17,10 +17,10 @@ def user_all_classes(view_func):
             for course in user:
                 if course.active == 'WORKOUT ONLY':
                     print(course.active, 'THIS IS THE ACTIVE')
-                    raise PermissionDenied
+                    return render(request, 'ccfit_app/permission_denied.html')
                 elif course.active == 'INACTIVE':
                     print(course.active, 'THIS IS THE ACTIVE')
-                    raise PermissionDenied
+                    return render(request, 'ccfit_app/permission_denied.html')
                 else:
                     return view_func(request, *args, **kwargs)
         else:
@@ -43,7 +43,7 @@ def user_workout(view_func):
                     print(course.active, 'THIS IS THE ACTIVE')
                     return view_func(request, *args, **kwargs)
                 else:
-                    raise PermissionDenied
+                    return render(request, 'ccfit_app/permission_denied.html')
         else:
             return view_func(request, *args, **kwargs)
     return wrap
@@ -56,5 +56,5 @@ def admin_only(view_func):
         if user.type == 'ADMINISTRATOR':
             return view_func(request, *args, **kwargs)
         else:
-            raise PermissionDenied
+            return render(request, 'ccfit_app/permission_denied.html')
     return wrap

@@ -2,13 +2,13 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
     <h1>THIS IS THE MAIN SIGNUP PAGEEEEEEEEEEEE</h1>
-    <a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
+    <a href="{% url 'ccfit_app:index' %}">Home</a>
     <div class="container">
       <form class="user" method="post" id="loginForm">
         {% csrf_token %}
         {{ form.as_p }}
         {{ profile_form.as_p }}
-        <button type="submit" class="font-weight-bold btn btn-warning btn-block">Acessar</button>
+        <button type="submit" class="font-weight-bold btn btn-warning btn-block">Access</button>
         <hr>
       </form>
     </div>

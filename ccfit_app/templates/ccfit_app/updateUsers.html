@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
+{% load widget_tweaks %}
 {% block body_block %}
 <h1>THATS THE UPDATE USER PAGE</h1>
-<a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
+<a href="{% url 'ccfit_app:index' %}">Home</a>
 <p></p>
 
 <form method="post">
   {% csrf_token %}
 
-    {{ form.type }}
-    {{ form.active }}
+    {{form.type.label}}: {% render_field form.type %}
+    {{form.active.label}}: {% render_field form.active %}
+    {{form.nickname.label}}: {% render_field form.nickname %}
+    {{form.gender.label}}: {% render_field form.gender %}
+    {{form.birth_date.label}}: {% render_field form.birth_date %}
+    {{form.address1.label}}: {% render_field form.address1 %}
+    {{form.address2.label}}: {% render_field form.address2 %}
+    {{form.county.label}}: {% render_field form.county %}
+    {{form.country.label}}: {% render_field form.country %}
+    {{form.prefix.label}}: {% render_field form.phone %}
+
     <input type="submit" value="Update">
 </form>
 

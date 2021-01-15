@@ -80,10 +80,16 @@ class UserProfileInfo(models.Model):
     ('ALL CLASSES','ALL CLASSES'),
     )
 
+    GENDER = (
+    ('MALE','MALE'),
+    ('FEMALE','FEMALE'),
+    )
+
+
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     email = models.EmailField(max_length=80,null=True)
     nickname = models.CharField(max_length=50,null=True)
-    gender = models.CharField(max_length=50,null=True)
+    gender = models.CharField(max_length=50, choices = GENDER, null=True)
     type = models.CharField(max_length=15, choices = TYPE_USER, null=True)
     active = models.CharField(max_length=15, choices = ACTIVE, null=True)
     birth_date = models.DateField(null=True)

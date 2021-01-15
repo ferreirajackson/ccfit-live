@@ -2,45 +2,44 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
     <h1>WELCOME TO CCFIT</h1>
-
+    <p>Welcome {{ nickname }}</p>
     <ul class="nav navbar-nav navbar-right">
         						{% if user.is_authenticated %}
                           {% if user.is_superuser %}
-                            <p><a href="{% url 'ccfit_app:all_users' %}">MANAGE USERS</a></p>
+                            <p><a href="{% url 'ccfit_app:all_users' %}">Manage users</a></p>
                           {% endif %}
-                          <p><a href="{% url 'ccfit_app:logout' %}">logout</a></p>
-                          <p><a href="{% url 'ccfit_app:edit_profile' %}">edit settings</a></p>
+                          <p><a href="{% url 'ccfit_app:logout' %}">Logout</a></p>
+                          <p><a href="{% url 'ccfit_app:edit_profile' %}">Edit Settings</a></p>
                           {% if user.userprofileinfo.id %}
-                            <p><a href="{% url 'ccfit_app:edit_profile_page' user.userprofileinfo.id %}">edit profile</a></p>
+                            <p><a href="{% url 'ccfit_app:edit_profile_page' user.userprofileinfo.id %}">Edit Profile</a></p>
                           {% else %}
-                            <p><a href="{% url 'ccfit_app:create_profile_page' %}">Create profile page</a></p>
+                            <p><a href="{% url 'ccfit_app:create_profile_page' %}">Create Profile Page</a></p>
                           {% endif %}
                           {% if registration %}
                             {% if status == 'PAID' %}
-                              <p><a href="{% url 'ccfit_app:booking_page' %}">Make a booking</a></p>
+                              <p><a href="{% url 'ccfit_app:booking_page' %}">Book Session</a></p>
                             {% endif %}
                           {% endif %}
         						{% else %}
-                          <p><a href="{% url 'ccfit_app:form_name' %}">GO TO FORM PAGE</a></p>
-                          <p><a href="{% url 'ccfit_app:login' %}">LOGIN</a></p>
-        						      <li><a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign up</a></li>
+                          <p><a href="{% url 'ccfit_app:login' %}">Login</a></p>
+        						      <li><a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign Up</a></li>
         		        {% endif %}
     </ul>
     {% if type == 'USER' %}
       {% if status == 'GENERATE' %}
-        <p><a href="{% url 'ccfit_app:payment' type=1 %}">PAYMENT ENROLLMENT</a></p>
+        <p><a href="{% url 'ccfit_app:payment' type=1 %}">Pay enrollment fee</a></p>
       {% endif %}
         <p>USER</p>
-        <p><a href="{% url 'ccfit_app:my_bookings' %}">CHECK PREVIOUS BOOKINGS</a></p>
+        <p><a href="{% url 'ccfit_app:my_bookings' %}">My Bookings</a></p>
       {% if status_MP == 'REQUESTED' %}
-        <p><a href="{% url 'ccfit_app:payment' type=2 %}">PAYMENT MONTHLY SECTION</a></p>
+        <p><a href="{% url 'ccfit_app:payment' type=2 %}">Payment monthly payment</a></p>
       {% endif %}
     {% elif type == 'TEACHER'  %}
       <p>TEACHER</p>
-      <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
+      <p><a href="{% url 'ccfit_app:check_classes' %}">Check classes</a></p>
     {% else  %}
-      <p><a href="{% url 'ccfit_app:check_classes' %}">CHECK_CLASSES</a></p>
-      <p><a href="{% url 'ccfit_app:invoices' %}">GENERATE INVOICE</a></p>
+      <p><a href="{% url 'ccfit_app:check_classes' %}">Check classes</a></p>
+      <p><a href="{% url 'ccfit_app:invoices' %}">Generate Invoice</a></p>
       <p>ADMINISTRATOR</p>
     {% endif %}
 {% endblock %}

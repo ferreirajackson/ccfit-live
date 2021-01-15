@@ -2,16 +2,16 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
 <h1>THATS THE BOOKING PAGE</h1>
-<a href="{% url 'ccfit_app:index' %}">SOMETHING HERE</a>
+<a href="{% url 'ccfit_app:index' %}">Home</a>
 <input type="date" id="date-input" required>
-<button id="submit">Submit</button>
+<button id="submit">Select date</button>
 <p></p>
 <!--{{ form.my_date_field }}-->
-<button type="button" onclick="location.href='{% url 'ccfit_app:workout' %}'" id='workout' name="button">BOOK WORKOUT</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:pilates' %}'" id='pilates' name="button">BOOK PILATES</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:jump' %}'" id='jump' name="button">BOOK JUMP</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:spin' %}'" id='spin' name="button">BOOK SPIN</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:yoga' %}'" id='yoga' name="button">BOOK YOGA</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:workout' %}'" id='workout' name="button">Workout</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:pilates' %}'" id='pilates' name="button">Pilates</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:jump' %}'" id='jump' name="button">Jump</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:spin' %}'" id='spin' name="button">Spin</button>
+<button type="button" onclick="location.href='{% url 'ccfit_app:yoga' %}'" id='yoga' name="button">Yoga</button>
 
 
 

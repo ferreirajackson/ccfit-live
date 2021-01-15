@@ -301,7 +301,6 @@ def MyBookings(request):
                 print(unit.date, 'unit')
                 print(unit.email_user, 'unit')
                 print(unit.session_number, 'unit')
-                print()
                 d1 = {str(unit.date): [str(request.user), sessions[str(unit.session_number)], model.__name__]}
                 data.update(d1)
 
@@ -369,6 +368,7 @@ def Check_Class_Amount(request, session):
     print('CHECKING am')
     if cancel.exists():
         context = {}
+        data = {}
         list = []
         class_name = request.session['class']
         dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
@@ -379,10 +379,13 @@ def Check_Class_Amount(request, session):
             for unit in new:
                 print(unit.email_user, 'unit')
                 list.append(unit.email_user)
+                user = UserProfileInfo.objects.get(email=unit.email_user)
+                d1 = {str(unit.email_user): [user.nickname, user.active]}
+                data.update(d1)
 
-        context['emails'] = list
-        print(context, 'THIS IS THE MAIN DICT')
-        return render(request, 'ccfit_app/class_amount.html', context)
+        # context['emails'] = list
+        print(data, 'THIS IS THE MAIN DICT')
+        return render(request, 'ccfit_app/class_amount.html', {'data': data})
 
 
 
@@ -1539,7 +1542,7 @@ def index(request):
         for course in user:
             value_type = course.type
             registered = course.registration_completed
-
+            nickname = course.nickname
 	#invoice info
     verify_enrollment = Invoice.objects.filter(email=request.user, type='ENROLLMENT FEE')
     if verify_enrollment.exists():
@@ -1553,7 +1556,7 @@ def index(request):
             status_mp = course.status
             if status_mp == 'REQUESTED':
                 break
-    mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp}
+    mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp, 'nickname': nickname}
     return render(request, 'ccfit_app/index.html', mydict)
 
 @method_decorator(admin_only, name='dispatch')
