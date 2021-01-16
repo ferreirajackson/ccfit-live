@@ -4,7 +4,7 @@
     <h1>WELCOME TO COUNT CLASSES {{title}}</h1>
     <a href="{% url 'ccfit_app:index' %}">Home</a>
 
-
+{% if show_buttons %}
     {% if session_1.enable %}
     <div class="">
       <b>{{session_1.start}} - {{session_1.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=1 %}'" name="button">{{session_1.1}}</button>
@@ -42,4 +42,8 @@
     {% endif %}
     <a class="btn btn-info" href="{% url 'ccfit_app:pdf_view' %}" target="_blank">View Schedule PDF</a>
     <a class="btn btn-info"  href="{% url 'ccfit_app:pdf_download' %}">Download Schedule PDF</a>
+
+{% else %}
+<h2>No classes for the selected date</h2>
+{% endif %}
 {% endblock %}

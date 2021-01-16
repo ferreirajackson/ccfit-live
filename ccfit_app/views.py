@@ -131,6 +131,19 @@ def SendInvoice(request, pk):
 @login_required
 def Payment(request, type):
     request.session['type_payment'] = type
+    if request.session['type_payment'] == '1':
+        amount = 30
+        description = 'ENROLLMENT FEE'
+    else:
+        user = UserProfileInfo.objects.get(email=request.user)
+        if user.active == 'ALL CLASSES':
+            amount = 50
+        elif user.active == 'WORKOUT ONLY':
+            amount = 35
+        else:
+            print('It wasnt possible to finish the transaction')
+        description = 'MONTHLY PAYMENT'
+    # context = {'nickname':_____, 'from_date':_____, 'to_date': _____, 'cost':_____,'subscription':_____ 'year':____ }
     print(request.session['type_payment'])
     return render(request, 'ccfit_app/payment.html')
 
@@ -154,23 +167,23 @@ def render_to_pdf(template_src, context_dict={}):
 	return None
 
 
-#Opens up page as PDF
-@method_decorator(admin_only, name='dispatch')
-class ViewPDF(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        data = {
-            "company": "Display",
-        	"address": "123 Street name",
-        	"city": "Vancouver",
-        	"state": "WA",
-        	"zipcode": "98663",
-            "phone": "555-555-2345",
-        	"email": "youremail@dennisivy.com",
-        	"website": "dennisivy.com",
-        }
-        pdf = render_to_pdf('ccfit_app/pdf_template.html', data)
-
-        return HttpResponse(pdf, content_type='application/pdf')
+# #Opens up page as PDF
+# @method_decorator(admin_only, name='dispatch')
+# class ViewPDF(LoginRequiredMixin, View):
+#     def get(self, request, *args, **kwargs):
+#         data = {
+#             "company": "Display",
+#         	"address": "123 Street name",
+#         	"city": "Vancouver",
+#         	"state": "WA",
+#         	"zipcode": "98663",
+#             "phone": "555-555-2345",
+#         	"email": "youremail@dennisivy.com",
+#         	"website": "dennisivy.com",
+#         }
+#         pdf = render_to_pdf('ccfit_app/pdf_template.html', data)
+#
+#         return HttpResponse(pdf, content_type='application/pdf')
 
 
 class InvoiceUser(LoginRequiredMixin, View):
@@ -189,14 +202,14 @@ class InvoiceUser(LoginRequiredMixin, View):
 				print(unit.cost, 'this')
 				print(unit.type, 'this')
 				print(unit.status, 'this')
-
-				d1 = {'email': unit.email, 'from_date': str(unit.from_date), 'to_date': str(unit.to_date), 'cost': unit.cost, 'type': unit.type}
+				user = UserProfileInfo.objects.get(email=unit.email)
+				d1 = {'email': unit.email, 'from_date': str(unit.from_date), 'to_date': str(unit.to_date), 'cost': unit.cost, 'type': unit.type, 'subscription': user.active}
 		else:
 			print("DIDNT FIND", num)
 		print('HERE I WANT TO SEE THE RESULT OF THE DICT AND LIST')
 		print(d1)
 		print('**********************************************************************************')
-		pdf = render_to_pdf('ccfit_app/invoice_template.html', d1)
+		pdf = render_to_pdf('ccfit_app/pdf/invoice_template.html', d1)
 
 		return HttpResponse(pdf, content_type='application/pdf')
 
@@ -210,7 +223,7 @@ class PDF(LoginRequiredMixin, View):
 		print(type(dict[class_number]))
 		list = [1,2,3,4,5]
 		list_user = []
-		data_second = {}
+		data_second, major = {},{}
 		for num in list:
 			new = dict[class_number].objects.filter(date=request.session['value'], session_number=num)
 			if new.exists():
@@ -218,28 +231,35 @@ class PDF(LoginRequiredMixin, View):
 					print(unit.date, 'this')
 					print(unit.email_user, 'this')
 					print(unit.session_number, 'this')
-					list_user.append(unit.email_user)
-				d1 = {str(num): list_user}
+					user = UserProfileInfo.objects.get(email=unit.email_user)
+					list_user.extend((user.nickname, user.phone))
+					print(list_user)
+					first_dict = {unit.email_user: list_user}
+					major.update(first_dict)
+					list_user = []
+				sessions = {'1': 'from 06:00 to 08:00','2': 'from 09:00 to 11:00','3': 'from 12:00 to 14:00','4': 'from 15:00 to 17:00','5': 'from 18:00 to 20:00', '6': 'from 21:00 to 23:00'}
+				print(sessions[str(num)])
+				d1 = {sessions[str(num)]: major}
 				data_second.update(d1)
-				list_user = []
+				major = {}
 			else:
 				print("NOTHING FOR THIS ", num)
 		print('HERE I WANT TO SEE THE RESULT OF THE DICT AND LIST')
 		print(data_second)
 		print('**********************************************************************************')
 		context = {"work" : Workout.objects.filter(date=self.request.session['value']).order_by('session_number')}
-		data = {
-		"company": "Display",
-		"address": "123 Street name",
-		"city": "Vancouver",
-		"state": "WA",
-		"zipcode": "98663",
-		"phone": "555-555-2345",
-		"email": "youremail@dennisivy.com",
-		"website": "dennisivy.com",
-
-		}
-		pdf = render_to_pdf('ccfit_app/pdf_template.html', {'data': data_second})
+		# data = {
+		# "company": "Display",
+		# "address": "123 Street name",
+		# "city": "Vancouver",
+		# "state": "WA",
+		# "zipcode": "98663",
+		# "phone": "555-555-2345",
+		# "email": "youremail@dennisivy.com",
+		# "website": "dennisivy.com",
+		#
+		# }
+		pdf = render_to_pdf('ccfit_app/pdf/pdf_template.html', {'data': data_second})
 
 		return HttpResponse(pdf, content_type='application/pdf')
 
@@ -255,7 +275,7 @@ class DownloadPDF(LoginRequiredMixin, View):
 		print(type(dict[class_number]))
 		list = [1,2,3,4,5]
 		list_user = []
-		data_second = {}
+		data_second, major = {},{}
 		for num in list:
 			new = dict[class_number].objects.filter(date=request.session['value'], session_number=num)
 			if new.exists():
@@ -263,10 +283,16 @@ class DownloadPDF(LoginRequiredMixin, View):
 					print(unit.date, 'this')
 					print(unit.email_user, 'this')
 					print(unit.session_number, 'this')
-					list_user.append(unit.email_user)
-				d1 = {str(num): list_user}
+					user = UserProfileInfo.objects.get(email=unit.email_user)
+					list_user.extend((user.nickname, user.phone))
+					print(list_user)
+					first_dict = {unit.email_user: list_user}
+					major.update(first_dict)
+					list_user = []
+
+				d1 = {str(num): major}
 				data_second.update(d1)
-				list_user = []
+				major = {}
 			else:
 				print("NOTHING FOR THIS ", num)
 		print('HERE I WANT TO SEE THE RESULT OF THE DICT AND LIST')
@@ -274,7 +300,7 @@ class DownloadPDF(LoginRequiredMixin, View):
 		print('**********************************************************************************')
 		context = {"work" : Workout.objects.filter(date=self.request.session['value']).order_by('session_number')}
 
-		pdf = render_to_pdf('ccfit_app/pdf_template.html', {'data': data_second})
+		pdf = render_to_pdf('ccfit_app/pdf/pdf_template.html', {'data': data_second})
 		response = HttpResponse(pdf, content_type='application/pdf')
 		content = 'attachment; filename="report.pdf"'
 		response['Content-Disposition'] = content
@@ -417,6 +443,7 @@ def ClassesCountView(request, class_number):
         #new_dict = {'1': 0,'2': 0,'3': 0,'4': 0,'5': 0,'6': 0}
         found_booking = dict[class_number].objects.filter(date=request.session['value']).values('session_number')
         print(found_booking)
+        show_buttons = False
         if found_booking.exists():
             for unit in found_booking:
                 session_number_keep = unit['session_number']
@@ -428,7 +455,10 @@ def ClassesCountView(request, class_number):
                 if context[session_id]['enable'] == False:
                     context[session_id]['enable'] = True
                     print('UPDATED')
+                    show_buttons = True
                 print(context, 'lets see')
+            dict = {'show_buttons': show_buttons}
+            context.update(dict)
     #found_booking = model.objects.filter(email_user=request.user, date=request.session['value'])
 
 

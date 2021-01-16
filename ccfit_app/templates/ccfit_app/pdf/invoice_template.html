@@ -19,25 +19,33 @@
 </head>
 
 <body>
-    <!-- Content for Static Frame 'header_frame' -->
-
 
     <!-- Content for Static Frame 'footer_frame' -->
     <div id="footer_content">(c) - page <pdf:pagenumber>
         of <pdf:pagecount>
     </div>
+
     <table>
-        {% for key, values in data.items %}
+      <thead>
         <tr>
-            <td>Date</td>
+          <th>email</th>
+          <th>from date</th>
+          <th>to date</th>
+          <th>cost</th>
+          <th>type</th>
+          <th>subscription</th>
         </tr>
+      </thead>
+      <tbody>
         <tr>
-            <td>{{key}}</td>
-            {% for v in values %}
-            <td>{{v}}</td>
-            {% endfor %}
+          <td>{{ email }}</td>
+          <td>{{ from_date }}</td>
+          <td>{{ to_date }}</td>
+          <td>{{ cost }}</td>
+          <td>{{ type }}</td>
+          <td>{{ subscription }}</td>
         </tr>
-        {% endfor %}
+      </tbody>
     </table>
 
 </body>

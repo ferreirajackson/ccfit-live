@@ -19,31 +19,32 @@
 </head>
 
 <body>
+    <!-- Content for Static Frame 'header_frame' -->
+
 
     <!-- Content for Static Frame 'footer_frame' -->
     <div id="footer_content">(c) - page <pdf:pagenumber>
         of <pdf:pagecount>
     </div>
-
     <table>
-      <thead>
+        {% for key, values in data.items %}
         <tr>
-          <th>email</th>
-          <th>from date</th>
-          <th>to date</th>
-          <th>cost</th>
-          <th>type</th>
+            <td>Time</td>
+            <td>Email</td>
+            <td>Name</td>
+            <td>number</td>
         </tr>
-      </thead>
-      <tbody>
         <tr>
-          <td>{{ email }}</td>
-          <td>{{ from_date }}</td>
-          <td>{{ to_date }}</td>
-          <td>{{ cost }}</td>
-          <td>{{ type }}</td>
+        
+          <td>{{key}}</td>
+          {% for rar, sys in values.items %}
+            <td>{{rar}}</td>a
+          {% for t in sys %}
+          <td>{{t}}</td>
+          {% endfor %}
         </tr>
-      </tbody>
+        {% endfor %}
+      {% endfor %}
     </table>
 
 </body>
