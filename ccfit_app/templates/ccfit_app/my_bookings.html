@@ -4,22 +4,26 @@
 <h1>THATS THE YPUR BOOKINGS PAGE</h1>
 <a href="{% url 'ccfit_app:index' %}">Home</a>
 
+{% if data %}
+  <table>
+      <tr>
+          <td>Date</td>
+          <td>user</td>
+          <td>session</td>
+          <td>Class</td>
+      </tr>
 
-<table>
-    <tr>
-        <td>Date</td>
-        <td>user</td>
-        <td>session</td>
-        <td>Class</td>
-    </tr>
+      {% for key, values in data.items %}
+      <tr>
+          <td>{{key}}</td>
+          {% for v in values %}
+          <td>{{v}}</td>
+          {% endfor %}
+      </tr>
+      {% endfor %}
+  </table>
+{% else %}
+  <h3>You have booked a class or workout yet</h3>
+{% endif %}
 
-    {% for key, values in data.items %}
-    <tr>
-        <td>{{key}}</td>
-        {% for v in values %}
-        <td>{{v}}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-</table>
 {% endblock %}

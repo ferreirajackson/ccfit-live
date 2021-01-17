@@ -78,14 +78,15 @@ def Payment_request(request):
 			verify_enrollment.to_date = future_30days_DATE
 			verify_enrollment.status = 'PAID'
 			verify_enrollment.save()
-			user = UserProfileInfo.objects.get(email=request.user)
-			cost = 35
-			if user.active == 'WORKOUT ONLY':
-				cost = 35
-			else:
-				cost = 50
-			p = Invoice(email=verify_enrollment.email,from_date=verify_enrollment.from_date,to_date=verify_enrollment.to_date,year=verify_enrollment.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
-			p.save(force_insert=True)
+			# CHECK WHY I AM CREATING THE FIRST PAYMENT WHEN THE ENROLLMENT WAS PAID
+			# user = UserProfileInfo.objects.get(email=request.user)
+			# cost = 35
+			# if user.active == 'WORKOUT ONLY':
+			# 	cost = 35
+			# else:
+			# 	cost = 50
+			# p = Invoice(email=verify_enrollment.email,from_date=verify_enrollment.from_date,to_date=verify_enrollment.to_date,year=verify_enrollment.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+			# p.save(force_insert=True)
 		elif request.session['type_payment'] == '2':
 			# verificar qual a chave certa para fazer essar busca e pegar apenas um registro
 			verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT', status='REQUESTED').order_by('from_date')
@@ -131,21 +132,35 @@ def SendInvoice(request, pk):
 @login_required
 def Payment(request, type):
     request.session['type_payment'] = type
+    user = UserProfileInfo.objects.get(email=request.user)
     if request.session['type_payment'] == '1':
-        amount = 30
+        # amount = 30
         description = 'ENROLLMENT FEE'
+        invoice = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+        from_date = invoice.from_date
+        to_date = invoice.to_date
+        year = invoice.year
+        cost = invoice.cost
     else:
-        user = UserProfileInfo.objects.get(email=request.user)
-        if user.active == 'ALL CLASSES':
-            amount = 50
-        elif user.active == 'WORKOUT ONLY':
-            amount = 35
-        else:
-            print('It wasnt possible to finish the transaction')
+        # if user.active == 'ALL CLASSES':
+        #     amount = 50
+        # elif user.active == 'WORKOUT ONLY':
+        #     amount = 35
+        # else:
+        #     print('It wasnt possible to finish the transaction')
         description = 'MONTHLY PAYMENT'
-    # context = {'nickname':_____, 'from_date':_____, 'to_date': _____, 'cost':_____,'subscription':_____ 'year':____ }
+        invoice = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT', status='REQUESTED').order_by('from_date')
+        print(invoice)
+        if invoice.exists():
+            for course in invoice:
+                from_date = course.from_date
+                to_date = course.to_date
+                year = course.year
+                cost = course.cost
+                break
+    context = {'nickname':user.nickname, 'email': request.user, 'from_date':from_date, 'to_date': to_date, 'cost':cost,'subscription':description, 'year':year }
     print(request.session['type_payment'])
-    return render(request, 'ccfit_app/payment.html')
+    return render(request, 'ccfit_app/payment.html', context)
 
 
 @method_decorator(admin_only, name='dispatch')
@@ -1154,7 +1169,7 @@ def Check_Booking_jump(request, session):
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
         cancelling_allclases(request)
-        context = {'response': 'cancelled'}
+        context = {'response': 'Your booking have been successfully cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
         flag_found = False
@@ -1188,10 +1203,10 @@ def Check_Booking_jump(request, session):
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the JUMP session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Jump CLASS - Booking Confirmation', message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
-            context = {'response': 'Confirmed'}
+            context = {'response': 'Your booking have been successfully confirmed'}
             booking.save()
         else:
-            context = {'response': 'YOU CANNOT BOOK'}
+            context = {'response': 'There is a class or workout session alredy booked for this date'}
         return render(request, 'ccfit_app/confirmation.html', context)
 
 
@@ -1204,7 +1219,7 @@ def Check_Booking_spin(request, session):
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
         cancelling_allclases(request)
-        context = {'response': 'cancelled'}
+        context = {'response': 'Your booking have been successfully cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
         flag_found = False
@@ -1235,10 +1250,10 @@ def Check_Booking_spin(request, session):
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Spin session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Spin CLASS - Booking Confirmation', message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
-            context = {'response': 'Confirmed'}
+            context = {'response': 'Your booking have been successfully confirmed'}
             booking.save()
         else:
-            context = {'response': 'YOU CANNOT BOOK'}
+            context = {'response': 'There is a class or workout session alredy booked for this date'}
         return render(request, 'ccfit_app/confirmation.html', context)
 
 
@@ -1251,7 +1266,7 @@ def Check_Booking_yoga(request, session):
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
         cancelling_allclases(request)
-        context = {'response': 'cancelled'}
+        context = {'response': 'Your booking have been successfully cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
         flag_found = False
@@ -1282,10 +1297,10 @@ def Check_Booking_yoga(request, session):
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Yoga session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Yoga CLASS - Booking Confirmation', message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
-            context = {'response': 'Confirmed'}
+            context = {'response': 'Your booking have been successfully confirmed'}
             booking.save()
         else:
-            context = {'response': 'YOU CANNOT BOOK'}
+            context = {'response': 'There is a class or workout session alredy booked for this date'}
         return render(request, 'ccfit_app/confirmation.html', context)
 
 
@@ -1298,7 +1313,7 @@ def Check_Booking_pilates(request, session):
         print('IT EXISTS, I WANT TO CANCEL')
         cancel.delete()
         cancelling_allclases(request)
-        context = {'response': 'cancelled'}
+        context = {'response': 'Your booking have been successfully cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
         flag_found = False
@@ -1329,10 +1344,10 @@ def Check_Booking_pilates(request, session):
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Pilates session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Pilates CLASS - Booking Confirmation', message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
-            context = {'response': 'Confirmed'}
+            context = {'response': 'Your booking have been successfully confirmed'}
             booking.save()
         else:
-            context = {'response': 'YOU CANNOT BOOK'}
+            context = {'response': 'There is a class or workout session alredy booked for this date'}
         return render(request, 'ccfit_app/confirmation.html', context)
 
 
@@ -1367,7 +1382,7 @@ def Check_Booking_workout(request, session):
                 # break
 			# END FOR
 		# DO THE SUBTRACTION OF THE TABLE FROM HERE
-        context = {'response': 'cancelled'}
+        context = {'response': 'Your booking have been successfully cancelled'}
         return render(request, 'ccfit_app/confirmation.html', context)
     else:
         flag_found = False
@@ -1405,10 +1420,10 @@ def Check_Booking_workout(request, session):
                             print(email_user)
                             message = 'Dear ' + str(request.user) + '\nThank you for booking the Workout session with CCFIT. \nYour booking is now confirmed for: ' + str(request.session['value']) + ' \nStart Time '+ start + ' - ' + 'End Time ' + finish
                             send_mail('CCFIT Workout CLASS - Booking Confirmation', message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
-            context = {'response': 'Confirmed'}
+            context = {'response': 'Your booking have been successfully confirmed'}
             booking.save()
         else:
-            context = {'response': 'YOU CANNOT BOOK'}
+            context = {'response': 'There is a class or workout session alredy booked for this date'}
         return render(request, 'ccfit_app/confirmation.html', context)
 
 @login_required
