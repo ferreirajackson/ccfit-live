@@ -101,6 +101,8 @@ class UserProfileInfo(models.Model):
     phone = models.CharField(max_length=10,null=True)
     registration_completed = models.BooleanField(default=False)
     membership = models.CharField(max_length=15, choices = TYPE_MEMBERSHIP, null=True)
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
 
 
@@ -144,6 +146,8 @@ class Invoice(models.Model):
     cost = models.IntegerField(null=True)
     type = models.CharField(max_length=30, choices = TYPE, null=True)
     status = models.CharField(max_length=15, choices = STATUS, null=True)
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
     def __str__(self):
         return str(self.email)
@@ -152,7 +156,8 @@ class Workout(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
     session_number = models.IntegerField(null=True)
-
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
     def __str__(self):
         return self.email_user
@@ -161,7 +166,8 @@ class Pilates(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
     session_number = models.IntegerField(null=True)
-
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
     def __str__(self):
         return self.email_user
@@ -174,6 +180,8 @@ class Yoga(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
     session_number = models.IntegerField(null=True)
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
 
     def __str__(self):
@@ -183,7 +191,8 @@ class Jump(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
     session_number = models.IntegerField(null=True)
-
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
     def __str__(self):
         return self.email_user
@@ -192,7 +201,8 @@ class Spin(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
     session_number = models.IntegerField(null=True)
-
+    date_audit = models.DateField(null=True)
+    hour_audit = models.TimeField(null=True)
 
     def __str__(self):
         return self.email_user

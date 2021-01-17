@@ -96,6 +96,10 @@ def Payment_request(request):
 					verify_enrollment_unique = Invoice.objects.get(pk=course.pk)
 					verify_enrollment_unique.status = 'PAID'
 					verify_enrollment_unique.save()
+					email_user = str(request.user)
+					message = 'Dear ' + str(verify_enrollment_unique.email) + '\nThank you for trusting CCFIT to be your gym. \nThis is your receipt for paying €' +  str(verify_enrollment_unique.cost) + ' regarding the ' + verify_enrollment_unique.type
+					send_mail('CCFIT Invoice: ' + str(verify_enrollment_unique.from_date) + ' - ' + str(verify_enrollment_unique.to_date), message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
+
 					break
 			# user = UserProfileInfo.objects.get(email=request.user)
 			# verify_enrollment.status = 'PAID'
@@ -1104,7 +1108,11 @@ def invoice_insertion(request):
 		else:
 			cost = 50
 		verify = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
-		p = Invoice(email=request.user,from_date=verify.from_date,to_date=verify.to_date,year=verify.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+		today_date = datetime.today().strftime('%Y-%m-%d')
+		today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+		time = datetime.today().strftime('%H:%M:%S')
+		time_audit = datetime.strptime(time, '%H:%M:%S').time()
+		p = Invoice(email=request.user,from_date=verify.from_date,to_date=verify.to_date,year=verify.year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE", date_audit=today_date_audit, hour_audit=time_audit)
 		p.save(force_insert=True)
 	else:
 		today_date_object = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
@@ -1150,7 +1158,11 @@ def invoice_insertion(request):
 						cost = 35
 					else:
 						cost = 50
-					p = Invoice(email=request.user,from_date=from_sameday,to_date=to_30d_date,year=year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE")
+					today_date = datetime.today().strftime('%Y-%m-%d')
+					today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+					time = datetime.today().strftime('%H:%M:%S')
+					time_audit = datetime.strptime(time, '%H:%M:%S').time()
+					p = Invoice(email=request.user,from_date=from_sameday,to_date=to_30d_date,year=year,cost=cost,type="MONTHLY PAYMENT",status="GENERATE", date_audit=today_date_audit, hour_audit=time_audit)
 					p.save(force_insert=True)
 					flag_found = False
 				else:
@@ -1185,7 +1197,15 @@ def Check_Booking_jump(request, session):
             for n in range(1,7):
                 if session == str(n):
                     print('#check on the table ', n,' HERE -------------------------------')
-                    booking = Jump(date=request.session['value'], email_user=request.user, session_number=session)
+                    today_date = datetime.today().strftime('%Y-%m-%d')
+                    today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+                    time = datetime.today().strftime('%H:%M:%S')
+                    time_audit = datetime.strptime(time, '%H:%M:%S').time()
+                    print(today_date_audit)
+                    print(type(today_date_audit))
+                    print(time_audit)
+                    print(type(time_audit))
+                    booking = Jump(date=request.session['value'], email_user=request.user, session_number=session, date_audit=today_date_audit, hour_audit=time_audit)
                     #SEND EMAIL FUNCTIONALITY
 
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
@@ -1233,7 +1253,15 @@ def Check_Booking_spin(request, session):
             for n in range(1,7):
                 if session == str(n):
                     print('#check on the table ', n,' HERE -------------------------------')
-                    booking = Spin(date=request.session['value'], email_user=request.user, session_number=session)
+                    today_date = datetime.today().strftime('%Y-%m-%d')
+                    today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+                    time = datetime.today().strftime('%H:%M:%S')
+                    time_audit = datetime.strptime(time, '%H:%M:%S').time()
+                    print(today_date_audit)
+                    print(type(today_date_audit))
+                    print(time_audit)
+                    print(type(time_audit))
+                    booking = Spin(date=request.session['value'], email_user=request.user, session_number=session, date_audit=today_date_audit, hour_audit=time_audit)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_3': { 'start':'12:00', 'finish':'14:00', 'session_number': 3,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1280,7 +1308,16 @@ def Check_Booking_yoga(request, session):
             for n in range(1,7):
                 if session == str(n):
                     print('#check on the table ', n,' HERE -------------------------------')
-                    booking = Yoga(date=request.session['value'], email_user=request.user, session_number=session)
+                    print('AAAAAAAAAAAAAAAQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII')
+                    today_date = datetime.today().strftime('%Y-%m-%d')
+                    today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+                    time = datetime.today().strftime('%H:%M:%S')
+                    time_audit = datetime.strptime(time, '%H:%M:%S').time()
+                    print(today_date_audit)
+                    print(type(today_date_audit))
+                    print(time_audit)
+                    print(type(time_audit))
+                    booking = Yoga(date=request.session['value'], email_user=request.user, session_number=session, date_audit=today_date_audit, hour_audit=time_audit)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_3': { 'start':'12:00', 'finish':'14:00', 'session_number': 3,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1327,7 +1364,15 @@ def Check_Booking_pilates(request, session):
             for n in range(1,7):
                 if session == str(n):
                     print('#check on the table ', n,' HERE -------------------------------')
-                    booking = Pilates(date=request.session['value'], email_user=request.user, session_number=session)
+                    today_date = datetime.today().strftime('%Y-%m-%d')
+                    today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+                    time = datetime.today().strftime('%H:%M:%S')
+                    time_audit = datetime.strptime(time, '%H:%M:%S').time()
+                    print(today_date_audit)
+                    print(type(today_date_audit))
+                    print(time_audit)
+                    print(type(time_audit))
+                    booking = Pilates(date=request.session['value'], email_user=request.user, session_number=session, date_audit=today_date_audit, hour_audit=time_audit)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_3': { 'start':'12:00', 'finish':'14:00', 'session_number': 3,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1396,7 +1441,15 @@ def Check_Booking_workout(request, session):
             for n in range(1,7):
                 if session == str(n):
                     print('#check on the table ', n,' HERE -------------------------------')
-                    booking = Workout(date=request.session['value'], email_user=request.user, session_number=session)
+                    today_date = datetime.today().strftime('%Y-%m-%d')
+                    today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+                    time = datetime.today().strftime('%H:%M:%S')
+                    time_audit = datetime.strptime(time, '%H:%M:%S').time()
+                    print(today_date_audit)
+                    print(type(today_date_audit))
+                    print(time_audit)
+                    print(type(time_audit))
+                    booking = Workout(date=request.session['value'], email_user=request.user, session_number=session, date_audit=today_date_audit, hour_audit=time_audit)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
                             'session_3': { 'start':'12:00', 'finish':'14:00', 'session_number': 3,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1498,14 +1551,20 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
             future_30days = datetime.strptime(future_30days, '%Y-%m-%d').date()
 			# print(future_30days, 'future_30days')
             if not verify_enrollment.exists():
-	            p = Invoice(email=profile.email,
+                today_date = datetime.today().strftime('%Y-%m-%d')
+                today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+                time = datetime.today().strftime('%H:%M:%S')
+                time_audit = datetime.strptime(time, '%H:%M:%S').time()
+                p = Invoice(email=profile.email,
 	            			 from_date=today_date_object,
 							 to_date=future_30days,
 	            			 year=currentYear,
 	            			 cost=30,
 	            			 type="ENROLLMENT FEE",
-	            			 status="GENERATE")
-	            p.save(force_insert=True)
+	            			 status="GENERATE",
+							 date_audit=today_date_audit,
+							 hour_audit=time_audit)
+                p.save(force_insert=True)
             profile.save()
             return HttpResponseRedirect(reverse_lazy('ccfit:index'))
         else:
@@ -1550,6 +1609,12 @@ def create_user(request):
             profile = profile_form.save(commit=False)
             profile.email = user.email
             profile.user = user
+            today_date = datetime.today().strftime('%Y-%m-%d')
+            today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+            time = datetime.today().strftime('%H:%M:%S')
+            time_audit = datetime.strptime(time, '%H:%M:%S').time()
+            profile.date_audit = today_date_audit
+            profile.hour_audit = time_audit
             profile.save()
             email = request.POST['email']
             password = request.POST['password1']
