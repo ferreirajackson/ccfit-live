@@ -5,57 +5,60 @@
 <a href="{% url 'ccfit_app:index' %}">Home</a>
 <p></p>
 
-<form method="GET">
-  <div class="input-group-prepend">
-    <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Search</button>
-  </div>
-  <input type="text" placeholder="Type the email" name="search" id="search">
-  <div class="table-responsive">
-    <table class="table table-hover border rounded shadow-sm bg-white" id="dataTable" width="100%" cellspacing="0">
-      <thead>
-        <tr class="bg-primary text-white">
-          <th style="min-width:20px">Email</th>
-          <th style="min-width:110px">From date</th>
-          <th style="min-width:80px">To date</th>
-          <th style="min-width:80px">Year</th>
-          <th style="min-width:80px">Cost</th>
-          <th style="min-width:80px">Type</th>
-          <th style="min-width:80px">Status</th>
-
-        </tr>
-      </thead>
-      <tbody>
-        {% for invoice in invoices %}
-        <tr>
-          <td>{{ invoice.email }}</td>
-          <td>{{ invoice.from_date }}</td>
-          <td>{{ invoice.to_date }}</td>
-          <td>{{ invoice.year }}</td>
-          <td>{{ invoice.cost }}</td>
-          <td>{{ invoice.type }}</td>
-          <td>{{ invoice.status }}</td>
-          <td>
-          <div align="center">
-              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">View Invoice</a>
-              </button>
-              {% if invoice.type == 'MONTHLY PAYMENT' and invoice.status == 'GENERATE'  %}
-              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"  title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:send_invoice' invoice.pk %}">Send to user</a>
-              </button>
-              {% endif %}
-              {% if invoice.status != 'PAID'  %}
-              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
-                <a class="btn btn-info" href="{% url 'ccfit_app:mark_paid' invoice.pk %}">Mark as paid</a>
-              </button>
-              {% endif %}
-          </div>
-        </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</form>
+{% if invoices %}
+  <form method="GET">
+    <div class="input-group-prepend">
+      <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Search</button>
+    </div>
+    <input type="text" placeholder="Type the email" name="search" id="search">
+    <div class="table-responsive">
+      <table class="table table-hover border rounded shadow-sm bg-white" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+          <tr class="bg-primary text-white">
+            <th style="min-width:20px">Email</th>
+            <th style="min-width:110px">From date</th>
+            <th style="min-width:80px">To date</th>
+            <th style="min-width:80px">Year</th>
+            <th style="min-width:80px">Cost</th>
+            <th style="min-width:80px">Type</th>
+            <th style="min-width:80px">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for invoice in invoices %}
+          <tr>
+            <td>{{ invoice.email }}</td>
+            <td>{{ invoice.from_date }}</td>
+            <td>{{ invoice.to_date }}</td>
+            <td>{{ invoice.year }}</td>
+            <td>{{ invoice.cost }}</td>
+            <td>{{ invoice.type }}</td>
+            <td>{{ invoice.status }}</td>
+            <td>
+            <div align="center">
+                <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
+                  <a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' invoice.pk %}" target="_blank">View Invoice</a>
+                </button>
+                {% if invoice.type == 'MONTHLY PAYMENT' and invoice.status == 'GENERATE'  %}
+                <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"  title="Editar informações do cliente">
+                  <a class="btn btn-info" href="{% url 'ccfit_app:send_invoice' invoice.pk %}">Send to user</a>
+                </button>
+                {% endif %}
+                {% if invoice.status != 'PAID'  %}
+                <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm"   title="Editar informações do cliente">
+                  <a class="btn btn-info" href="{% url 'ccfit_app:mark_paid' invoice.pk %}">Mark as paid</a>
+                </button>
+                {% endif %}
+            </div>
+          </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </form>
+{% else %}
+<h3>There are no invoices to generate</h3>
+{% endif %}
 
 {% endblock %}

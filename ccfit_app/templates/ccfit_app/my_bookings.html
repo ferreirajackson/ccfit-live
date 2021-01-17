@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-<h1>THATS THE YPUR BOOKINGS PAGE</h1>
+<h1>THATS THE YOUR BOOKINGS PAGE</h1>
 <a href="{% url 'ccfit_app:index' %}">Home</a>
 
 {% if data %}
@@ -23,7 +23,7 @@
       {% endfor %}
   </table>
 {% else %}
-  <h3>You have booked a class or workout yet</h3>
+  <h3>You haven't booked any class or workout yet</h3>
 {% endif %}
 
 {% endblock %}

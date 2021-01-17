@@ -3,6 +3,9 @@
 {% block body_block %}
     <h1>WELCOME TO CCFIT</h1>
     <p>Welcome {{ nickname }}</p>
+    {% if not registration %}
+        <h3 style="color:red;">Please finish your registration by clicking on 'Edit Profile' to generate the Enrollment Fee </h3>
+    {% endif %}
     <ul class="nav navbar-nav navbar-right">
         						{% if user.is_authenticated %}
                           {% if user.is_superuser %}

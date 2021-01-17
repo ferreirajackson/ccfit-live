@@ -522,8 +522,8 @@ class WorkoutView(LoginRequiredMixin, generic.TemplateView):
                 for course in user:
                     session_number_keep = course['session_number']
                     print(session_number_keep)
-            ###############################################################
-            ###############################################################
+            #---------------------------------------------------------------------
+            #---------------------------------------------------------------------
             if booking_date_object == today_date_object:
                 #do something
                 print(time.strftime("%H:%M"))
@@ -637,8 +637,8 @@ class PilatesView(LoginRequiredMixin, generic.TemplateView):
                 for course in user:
                     session_number_keep = course['session_number']
                     print(session_number_keep)
-            ###############################################################
-            ###############################################################
+            #---------------------------------------------------------------------
+            #---------------------------------------------------------------------
             print(booking_date_object)
             print(today_date_object)
             if booking_date_object == today_date_object:
@@ -757,8 +757,8 @@ class YogaView(LoginRequiredMixin, generic.TemplateView):
                 for course in user:
                     session_number_keep = course['session_number']
                     print(session_number_keep)
-            ###############################################################
-            ###############################################################
+            #---------------------------------------------------------------------
+            #---------------------------------------------------------------------
             print(booking_date_object)
             print(today_date_object)
             if booking_date_object == today_date_object:
@@ -877,8 +877,8 @@ class SpinView(LoginRequiredMixin, generic.TemplateView):
                 for course in user:
                     session_number_keep = course['session_number']
                     print(session_number_keep)
-            ###############################################################
-            ###############################################################
+            #---------------------------------------------------------------------
+            #---------------------------------------------------------------------
             print(booking_date_object)
             print(today_date_object)
             if booking_date_object == today_date_object:
@@ -999,8 +999,8 @@ class JumpView(LoginRequiredMixin, generic.TemplateView):
                 for course in user:
                     session_number_keep = course['session_number']
                     print(session_number_keep)
-            ###############################################################
-            ###############################################################
+            #---------------------------------------------------------------------
+            #---------------------------------------------------------------------
             print(booking_date_object)
             print(today_date_object)
             if booking_date_object == today_date_object:
@@ -1184,7 +1184,7 @@ def Check_Booking_jump(request, session):
         if not flag_found:
             for n in range(1,7):
                 if session == str(n):
-                    print('#check on the table ', n,' HERE ###############################')
+                    print('#check on the table ', n,' HERE -------------------------------')
                     booking = Jump(date=request.session['value'], email_user=request.user, session_number=session)
                     #SEND EMAIL FUNCTIONALITY
 
@@ -1232,7 +1232,7 @@ def Check_Booking_spin(request, session):
         if not flag_found:
             for n in range(1,7):
                 if session == str(n):
-                    print('#check on the table ', n,' HERE ###############################')
+                    print('#check on the table ', n,' HERE -------------------------------')
                     booking = Spin(date=request.session['value'], email_user=request.user, session_number=session)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1279,7 +1279,7 @@ def Check_Booking_yoga(request, session):
         if not flag_found:
             for n in range(1,7):
                 if session == str(n):
-                    print('#check on the table ', n,' HERE ###############################')
+                    print('#check on the table ', n,' HERE -------------------------------')
                     booking = Yoga(date=request.session['value'], email_user=request.user, session_number=session)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1326,7 +1326,7 @@ def Check_Booking_pilates(request, session):
         if not flag_found:
             for n in range(1,7):
                 if session == str(n):
-                    print('#check on the table ', n,' HERE ###############################')
+                    print('#check on the table ', n,' HERE -------------------------------')
                     booking = Pilates(date=request.session['value'], email_user=request.user, session_number=session)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
@@ -1395,7 +1395,7 @@ def Check_Booking_workout(request, session):
         if not flag_found:
             for n in range(1,7):
                 if session == str(n):
-                    print('#check on the table ', n,' HERE ###############################')
+                    print('#check on the table ', n,' HERE -------------------------------')
                     booking = Workout(date=request.session['value'], email_user=request.user, session_number=session)
                     context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, 'expired':True,'status':'BOOK', 'enable':False},
                             'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2,  'expired':True, 'status':'BOOK', 'enable':False},
