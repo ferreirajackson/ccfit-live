@@ -10,9 +10,9 @@ class DateInput(forms.DateInput):
 class ExampleForm(forms.Form):
     my_date_field = forms.DateField(widget=DateInput)
 
-class ExampleModelForm(forms.Form):
-    class Meta:
-        widgets = {'my_date_field': DateInput()}
+# class ExampleModelForm(forms.Form):
+#     class Meta:
+#         widgets = {'my_date_field': DateInput()}
 
 
 class WorkoutForm(forms.ModelForm):
@@ -24,9 +24,6 @@ class WorkoutForm(forms.ModelForm):
                 'email_user',
                 'session_number',
         ]
-
-
-
 
 class SignUpForm(UserCreationForm):
     username = forms.CharField(max_length=50)

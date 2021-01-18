@@ -60,9 +60,7 @@ class User(AbstractUser):
     objects = UserManager()
 
 
-
 class UserProfileInfo(models.Model):
-
     TYPE_USER = (
     ('USER','USER'),
     ('TEACHER','TEACHER'),
@@ -85,7 +83,6 @@ class UserProfileInfo(models.Model):
     ('FEMALE','FEMALE'),
     )
 
-
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     email = models.EmailField(max_length=80,null=True)
     nickname = models.CharField(max_length=50,null=True)
@@ -105,13 +102,11 @@ class UserProfileInfo(models.Model):
     hour_audit = models.TimeField(null=True)
 
 
-
     def __str__(self):
         return str(self.user)
 
     def get_absolute_url(self):
         return reverse_lazy('ccfit:index')
-
 
 class MaxSession(models.Model):
     key = models.CharField(max_length=5,null=True)
@@ -125,10 +120,8 @@ class MaxSession(models.Model):
     def __str__(self):
         return self.description
 
-
 class Invoice(models.Model):
-
-    TYPE = (
+     TYPE = (
     ('ENROLLMENT FEE','ENROLLMENT FEE'),
     ('MONTHLY PAYMENT','MONTHLY PAYMENT'),
     )
