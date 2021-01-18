@@ -121,7 +121,7 @@ class MaxSession(models.Model):
         return self.description
 
 class Invoice(models.Model):
-     TYPE = (
+    TYPE = (
     ('ENROLLMENT FEE','ENROLLMENT FEE'),
     ('MONTHLY PAYMENT','MONTHLY PAYMENT'),
     )
