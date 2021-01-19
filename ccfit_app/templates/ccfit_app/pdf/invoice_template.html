@@ -1,3 +1,4 @@
+{% load static %}
 <html>
 <head>
 <style>
@@ -5,48 +6,131 @@
         size: a4 portrait;
         @frame header_frame {           /* Static Frame */
             -pdf-frame-content: header_content;
-            left: 50pt; width: 512pt; top: 50pt; height: 40pt;
+            left: 245pt; width: 350pt; top: 50pt; height: 300pt;
         }
+
+
         @frame content_frame {          /* Content Frame */
-            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
+            left: 50pt; width: 512pt; top: 150pt; height: 632pt;
         }
         @frame footer_frame {           /* Another static Frame */
             -pdf-frame-content: footer_content;
             left: 50pt; width: 512pt; top: 772pt; height: 20pt;
         }
     }
+    .total {
+      font-size: 20px;
+      align-self: flex-end;
+    }
+    body {
+      display: flex;
+      font-family: "Swiss";
+      font-size: 11px;
+    }
+
+    .grid {
+      display: grid;
+      width: 700px;
+      height: 525px;
+      margin: auto;
+      grid-template-areas: "mail mail calender calender" "ie chrome message message" "store store store camera";
+      grid-gap: 10px;
+    }
+    .color1 {
+  grid-area: color1;
+  background-color: #0399AA;
+}
+
+.color2 {
+  grid-area: color2;
+  background-color: #5B479C;
+}
+.logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+
+.title {
+  text-align: center;
+}
+.title>p{
+  font-size: 30px;
+  font-family: 'Fraunces', serif;
+}
+
 </style>
 </head>
 
 <body>
+
+
+
+    <!-- Content for Static Frame 'header_frame' -->
+    <div id="header_content">
+    <img class="logo" src="{% static '../../static/images/logo.png' %}" alt="logo" width="150" height="112">
+    </div>
+
+
+    <div class="grid">
+      <div class="color2">. </div>
+      <div class="color1">. </div>
+    </div>
+
+    <div  class="title">
+      <p><strong>Invoice</strong></p>
+    </div>
+
 
     <!-- Content for Static Frame 'footer_frame' -->
     <div id="footer_content">(c) - page <pdf:pagenumber>
         of <pdf:pagecount>
     </div>
 
+
+    <hr>
+    <!-- HTML Content -->
     <table>
-      <thead>
         <tr>
-          <th>email</th>
-          <th>from date</th>
-          <th>to date</th>
-          <th>cost</th>
-          <th>type</th>
-          <th>subscription</th>
+          <td><strong>Nickname:</strong> {{nickname}}</td>
+          <td><strong>Gender:</strong> {{gender}}</td>
         </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ email }}</td>
-          <td>{{ from_date }}</td>
-          <td>{{ to_date }}</td>
-          <td>{{ cost }}</td>
-          <td>{{ type }}</td>
-          <td>{{ subscription }}</td>
-        </tr>
-      </tbody>
+    		<tr>
+    			<td><strong>Address:</strong> {{address_one}} {{address_two}}</td>
+          <td><strong>County/Country:</strong> {{county}} {{country}},</td>
+    		</tr>
+    		<tr>
+    			<td><strong>Email:</strong> {{email}}</td>
+          <td><strong>Phone number:</strong> ({{prefix}}) {{phone}}</td>
+    		</tr>
     </table>
 
+    <hr>
+
+    <table>
+    	<tr>
+        <th>Date</th>
+    		<th>Subscription</th>
+    		<th>Type</th>
+    		<th>Cost</th>
+    	</tr>
+    	<tr>
+
+    		<td style="text-align: center;">{{ from_date }} - {{ to_date }}</td>
+    		<td style="text-align: center;">{{ subscription }}</td>
+    		<td style="text-align: center;">{{ type }}</td>
+    		<td style="text-align: center;">{{ cost }}</td>
+    	</tr>
+    </table>
+
+    <hr>
+
+    <p style="text-align: right;" class="total"><strong>Total: €{{ cost }}</strong></p>
+
+    <div class="grid">
+      <div class="color1">. </div>
+      <div class="color2">. </div>
+    </div>
 </body>
 </html>

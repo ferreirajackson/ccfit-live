@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
+{% load widget_tweaks %}
 {% block body_block %}
-    <h1>THIS IS THE MAIN SIGNUP PAGEEEEEEEEEEEE</h1>
-    <a href="{% url 'ccfit_app:index' %}">Home</a>
-    <div class="container">
-      <form class="user" method="post" id="loginForm">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {{ profile_form.as_p }}
-        <button type="submit" class="font-weight-bold btn btn-warning btn-block">Access</button>
-        <hr>
-      </form>
+  <form class="user" method="post" id="loginForm">
+    <div class="box">
+      <div class="box__title">ccfit</div>
+      {% csrf_token %}
+      {% render_field form.email class="box__input" placeholder="E-maill" %}
+      {% render_field form.first_name class="box__input" placeholder="First Name" %}
+      {% render_field form.last_name class="box__input" placeholder="Last Name" %}
+      {% render_field form.password1 class="box__input" placeholder="Password" %}
+      {% render_field form.password2 class="box__input" placeholder="Confirm password" %}
+      <p class="box__text">
+        Your password can’t be too similar to your other personal information. <br>
+        Your password must contain at least 8 characters.<br>
+        Your password can’t be a commonly used password.<br>
+        Your password can’t be entirely numeric.<br>
+      </p>
+      <button type="submit" class="btn">Access</button>
     </div>
+  </form>
+
+
 {% endblock %}

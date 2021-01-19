@@ -79,8 +79,8 @@ class UserProfileInfo(models.Model):
     )
 
     GENDER = (
-    ('MALE','MALE'),
-    ('FEMALE','FEMALE'),
+    ('Male','Male'),
+    ('Female','Female'),
     )
 
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)

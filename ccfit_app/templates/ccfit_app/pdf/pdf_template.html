@@ -1,51 +1,138 @@
-<html>
+{% load static %}
+<html style="background-image: url('/static/images/logo.png')">
+
 <head>
-<style>
+  <style>
     @page {
-        size: a4 portrait;
-        @frame header_frame {           /* Static Frame */
-            -pdf-frame-content: header_content;
-            left: 50pt; width: 512pt; top: 50pt; height: 40pt;
-        }
-        @frame content_frame {          /* Content Frame */
-            left: 50pt; width: 512pt; top: 90pt; height: 632pt;
-        }
-        @frame footer_frame {           /* Another static Frame */
-            -pdf-frame-content: footer_content;
-            left: 50pt; width: 512pt; top: 772pt; height: 20pt;
-        }
+
+      size: a4 portrait;
+
+      @frame header_frame {
+        /* Static Frame */
+        -pdf-frame-content: header_content;
+        left: 245pt;
+        width: 350pt;
+        top: 50pt;
+        height: 300pt;
+      }
+
+      @frame content_frame {
+        /* Content Frame */
+        left: 50pt;
+        width: 512pt;
+        top: 150pt;
+        height: 632pt;
+      }
+
+      @frame footer_frame {
+        /* Another static Frame */
+        -pdf-frame-content: footer_content;
+        left: 50pt;
+        width: 512pt;
+        top: 772pt;
+        height: 20pt;
+      }
     }
-</style>
+
+    .total {
+      font-size: 20px;
+      align-self: flex-end;
+    }
+
+    body {
+      display: flex;
+      font-family: "Swiss";
+      font-size: 11px;
+    }
+
+    .grid {
+      display: grid;
+      width: 700px;
+      height: 525px;
+      margin: auto;
+      grid-template-areas: "color1 color1 color2 color2""ie chrome message message""store store store camera";
+      grid-gap: 10px;
+    }
+
+    .color1 {
+      grid-area: color1;
+      background-color: #0399AA;
+    }
+
+    .color2 {
+      grid-area: color2;
+      background-color: #5B479C;
+    }
+
+    .logo {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+    }
+
+    .title {
+      text-align: center;
+    }
+
+    .title>p{
+      font-size: 30px;
+      font-family: 'Fraunces', serif;
+    }
+  </style>
 </head>
 
-<body>
-    <!-- Content for Static Frame 'header_frame' -->
+<body style="background-image: url('/static/images/logo.png')">
+
+  <!-- Content for Static Frame 'header_frame' -->
+  <div id="header_content">
+    <img class="logo" src="{% static '../../static/images/logo.png' %}" alt="logo" width="150" height="112">
+  </div>
+
+  <div class="grid">
+    <div class="color2">. </div>
+    <div class="color1">. </div>
+  </div>
+
+  <div class="title">
+    <p><strong>List of users per session</strong></p>
+  </div>
 
 
-    <!-- Content for Static Frame 'footer_frame' -->
-    <div id="footer_content">(c) - page <pdf:pagenumber>
-        of <pdf:pagecount>
-    </div>
-    <table>
-        {% for key, values in data.items %}
-        <tr>
-            <td>Time</td>
-            <td>Email</td>
-            <td>Name</td>
-            <td>number</td>
-        </tr>
-        <tr>
-        
-          <td>{{key}}</td>
-          {% for rar, sys in values.items %}
-            <td>{{rar}}</td>a
-          {% for t in sys %}
-          <td>{{t}}</td>
-          {% endfor %}
-        </tr>
-        {% endfor %}
+  <!-- Content for Static Frame 'footer_frame' -->
+  <div id="footer_content">(c) - page <pdf:pagenumber>
+      of <pdf:pagecount>
+  </div>
+
+  <div class="grid">
+    <div class="color1">. </div>
+    <div class="color2">. </div>
+  </div>
+
+  <!-- HTML Content -->
+  {% for key, values in data.items %}
+
+  <table>
+    <tr>
+      <th>Email</th>
+      <th>Name</th>
+      <th>Phone number</th>
+      <th>Time</th>
+    </tr>
+    <hr>
+
+    <tr>
+      {% for rar, sys in values.items %}
+      <td>{{rar}}</td>
+      {% for t in sys %}
+      <td style="text-align: center;">{{t}}</td>
       {% endfor %}
-    </table>
+      <td style="text-align: center;">{{key}}</td>
+    </tr>
+    {% endfor %}
+    {% endfor %}
+  </table>
 
 </body>
+
 </html>
