@@ -13,7 +13,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
+# UserManager table
 class UserManager(BaseUserManager):
     """Define a model manager for User model with no username field."""
 
@@ -47,7 +47,7 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-
+# User table
 class User(AbstractUser):
     """User model."""
 
@@ -60,6 +60,7 @@ class User(AbstractUser):
     objects = UserManager()
 
 
+# UserProfileInfo table
 class UserProfileInfo(models.Model):
     TYPE_USER = (
     ('USER','USER'),
@@ -108,6 +109,8 @@ class UserProfileInfo(models.Model):
     def get_absolute_url(self):
         return reverse_lazy('ccfit:index')
 
+
+# MaxSession table
 class MaxSession(models.Model):
     key = models.CharField(max_length=5,null=True)
     description = models.CharField(max_length=300,null=True)
@@ -120,6 +123,7 @@ class MaxSession(models.Model):
     def __str__(self):
         return self.description
 
+# Invoice table
 class Invoice(models.Model):
     TYPE = (
     ('ENROLLMENT FEE','ENROLLMENT FEE'),
@@ -145,6 +149,7 @@ class Invoice(models.Model):
     def __str__(self):
         return str(self.email)
 
+# Workout table
 class Workout(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
@@ -155,6 +160,7 @@ class Workout(models.Model):
     def __str__(self):
         return self.email_user
 
+# Pilates table
 class Pilates(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
@@ -169,6 +175,7 @@ class Pilates(models.Model):
         return 'Pilates'
 
 
+# Yoga table
 class Yoga(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
@@ -180,6 +187,7 @@ class Yoga(models.Model):
     def __str__(self):
         return self.email_user
 
+# Jump table
 class Jump(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)
@@ -190,6 +198,7 @@ class Jump(models.Model):
     def __str__(self):
         return self.email_user
 
+# Spin table
 class Spin(models.Model):
     date = models.DateField(null=True)
     email_user = models.EmailField(max_length=80,null=True)

@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
+{% load widget_tweaks %}
 {% load static %}
 {% load bootstrap3 %}
 
 {% block body_block %}
-<div class="container">
-    <h1>Login</h1>
-
+<section class="box-signup">
     <form class="user"  method="post" id="loginForm">
+      <div class="box">
+        <div class="box__logo">CC <span class="box__logo-color"> fit</span></div>
+        <h2>Signin</h2>
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="font-weight-bold btn btn-warning btn-block">Acessar</button>
+        <input type="email" name="email" id="email" class="box__input" placeholder="E-mail" required>
+        <input type="password" name="password" id="password" class="box__input" placeholder="Password" required>
+
+        <button type="submit"  class="btn">Access</button>
+        <input type="button" class="btn btn-info" value="Sing Up" onclick="location.href='{% url 'ccfit_app:signup' %}';">
+      </div>
     </form>
-    <a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign up</a>
-</div>
+  </section>
 {% endblock %}

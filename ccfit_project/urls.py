@@ -18,6 +18,7 @@ from django.conf.urls import url, include
 from ccfit_app import views
 from django.urls import path
 
+# Main urls routes file
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'^ccfit/', include('ccfit_app.urls',namespace='ccfit_app')),

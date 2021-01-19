@@ -36,14 +36,18 @@
       grid-template-areas: "mail mail calender calender" "ie chrome message message" "store store store camera";
       grid-gap: 10px;
     }
-    .color1 {
+.color1 {
   grid-area: color1;
-  background-color: #0399AA;
+  background-color: #424242;
 }
 
 .color2 {
   grid-area: color2;
-  background-color: #5B479C;
+  background-color: rgba(117, 117, 117, 0.8);
+}
+.color3 {
+  grid-area: color1;
+  background-color: #8BC34A;
 }
 .logo {
   display: block;
@@ -69,13 +73,14 @@
 
     <!-- Content for Static Frame 'header_frame' -->
     <div id="header_content">
-    <img class="logo" src="{% static '../../static/images/logo.png' %}" alt="logo" width="150" height="112">
+    <img class="logo" src="{% static '../../static/images/logoccfit.PNG' %}" alt="logo" width="150" height="112">
     </div>
 
 
     <div class="grid">
-      <div class="color2">. </div>
       <div class="color1">. </div>
+      <div class="color2">. </div>
+      <div class="color3">. </div>
     </div>
 
     <div  class="title">
@@ -129,8 +134,9 @@
     <p style="text-align: right;" class="total"><strong>Total: €{{ cost }}</strong></p>
 
     <div class="grid">
-      <div class="color1">. </div>
+      <div class="color3">. </div>
       <div class="color2">. </div>
+      <div class="color1">. </div>
     </div>
 </body>
 </html>

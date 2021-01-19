@@ -3,11 +3,11 @@ from .models import UserProfileInfo
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse
-from django.shortcuts import render
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 
 
-
+# This decorator allows all users to access the pages
+# in which will have the tag @user_all_classes at
 def user_all_classes(view_func):
     def wrap(request, *args, **kwargs):
         user = UserProfileInfo.objects.filter(email=request.user)
@@ -23,6 +23,9 @@ def user_all_classes(view_func):
             return view_func(request, *args, **kwargs)
     return wrap
 
+
+# This decorator allows only workout user to access the pages 
+# in which will have the tag @user_workout at
 def user_workout(view_func):
     def wrap(request, *args, **kwargs):
         user = UserProfileInfo.objects.filter(email=request.user)
@@ -38,6 +41,9 @@ def user_workout(view_func):
             return view_func(request, *args, **kwargs)
     return wrap
 
+
+# This decorator allows only admins to access the pages
+# in which will have the tag @admin_only at
 def admin_only(view_func):
     def wrap(request, *args, **kwargs):
         user = UserProfileInfo.objects.get(email=request.user)

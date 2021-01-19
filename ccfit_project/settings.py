@@ -83,9 +83,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ccfit_project.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+# Database set up
+# Here is the databse set up for postgresql
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

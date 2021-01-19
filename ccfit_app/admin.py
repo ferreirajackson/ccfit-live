@@ -27,7 +27,7 @@ class UserAdmin(DjangoUserAdmin):
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
 
-
+# All the tables set here will appear on the django admin panel
 admin.site.register(UserProfileInfo)
 admin.site.register(Invoice)
 admin.site.register(Workout)
