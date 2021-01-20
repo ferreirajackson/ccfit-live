@@ -1240,15 +1240,18 @@ def password_sucess(request):
 
 
 def LoginView(request):
-    email = request.POST.get('email')
-    password = request.POST.get('password')
-	# Authenticating the user
-    user = authenticate(request, email=email, password=password)
-    if user is not None:
-        login(request, user)
-        return render(request, 'ccfit_app/index.html')
-    else:
-        return render(request, 'ccfit_app/login.html')
+	if request.method == 'POST':
+	    email = request.POST.get('email')
+	    password = request.POST.get('password')
+		# Authenticating the user
+	    user = authenticate(request, email=email, password=password)
+	    if user is not None:
+	        login(request, user)
+	        return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+	    else:
+	        return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+	context = {}
+	return render(request, 'ccfit_app/login.html', context)
 
 # Sign up form
 def create_user(request):
@@ -1325,6 +1328,8 @@ def index(request):
             status_mp = course.status
             if status_mp == 'REQUESTED':
                 break
+    print(registered)
+    print('registeressssssssssssssssssssssssssssssssssssssssssd')
     mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp, 'nickname': nickname}
     return render(request, 'ccfit_app/index.html', mydict)
 
