@@ -55,6 +55,7 @@
     <td>{{ subscription }}</td>
   </tr>
 </table>
+<a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' pk %}" target="_blank">View Invoice</a>
 
 <form action="{% url 'ccfit_app:payment_request' %}" method="post" id="payment-form">
   {% csrf_token %}

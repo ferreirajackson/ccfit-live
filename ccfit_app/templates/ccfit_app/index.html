@@ -30,12 +30,12 @@
     </ul>
     {% if type == 'USER' %}
       {% if status == 'GENERATE' %}
-        <p><a href="{% url 'ccfit_app:payment' type=1 %}">Pay enrollment fee</a></p>
+        <p><a href="{% url 'ccfit_app:payment' type=1 %}">Payment: Enrolment fee</a></p>
       {% endif %}
         <p>USER</p>
         <p><a href="{% url 'ccfit_app:my_bookings' %}">My Bookings</a></p>
       {% if status_MP == 'REQUESTED' %}
-        <p><a href="{% url 'ccfit_app:payment' type=2 %}">Payment monthly payment</a></p>
+        <p><a href="{% url 'ccfit_app:payment' type=2 %}">Payment: Monthly payment</a></p>
       {% endif %}
     {% elif type == 'TEACHER'  %}
       <p>TEACHER</p>

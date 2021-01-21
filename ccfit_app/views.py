@@ -131,6 +131,7 @@ def Payment(request, type):
         to_date = invoice.to_date
         year = invoice.year
         cost = invoice.cost
+        pk = invoice.pk
     else:
 		# If for the monthly payment
         description = 'MONTHLY PAYMENT'
@@ -141,8 +142,9 @@ def Payment(request, type):
                 to_date = course.to_date
                 year = course.year
                 cost = course.cost
+                pk = course.pk
                 break
-    context = {'nickname':user.nickname, 'email': request.user, 'from_date':from_date, 'to_date': to_date, 'cost':cost,'subscription':description, 'year':year }
+    context = {'pk': pk, 'nickname':user.nickname, 'email': request.user, 'from_date':from_date, 'to_date': to_date, 'cost':cost,'subscription':description, 'year':year }
     return render(request, 'ccfit_app/payment.html', context)
 
 
