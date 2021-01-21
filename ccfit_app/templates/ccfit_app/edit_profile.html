@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
+{% load widget_tweaks %}
 
 
 {% block body_block %}
@@ -8,7 +9,10 @@
 
     <form class="user"  method="post" id="loginForm">
         {% csrf_token %}
-        {{ form.as_p }}
+        <p>{{form.email.label}}: {% render_field form.email %}</p>
+        <p>{{form.first_name.label}}: {% render_field form.first_name %}</p>
+        <p>{{form.last_name.label}}: {% render_field form.last_name %}</p>
+        <p><a href="{% url 'ccfit_app:change_password' %}">Click here</a> to change the user password</p>
         <button type="subtmit" class="font-weight-bold btn btn-warning btn-block">Edit Profile</button>
     </form>
 </div>
