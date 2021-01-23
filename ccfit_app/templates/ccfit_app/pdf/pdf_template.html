@@ -1,5 +1,5 @@
 {% load static %}
-<html style="background-image: url('/static/images/logo.png')">
+<html style="background-image: url('/static/img/logo.png')">
 
 <head>
   <style>
@@ -89,7 +89,7 @@
 
   <!-- Content for Static Frame 'header_frame' -->
   <div id="header_content">
-    <img class="logo" src="{% static '../../static/images/logoccfit.PNG' %}" alt="logo" width="150" height="112">
+    <img class="logo" src="{% static '../../static/img/logo_pdf.PNG' %}" alt="logo" width="150" height="112">
   </div>
 
 
@@ -129,7 +129,7 @@
     <hr>
 
     <tr>
-      {% for rar, sys in values.items %}
+    {% for rar, sys in values.items %}
       <td>{{rar}}</td>
       {% for t in sys %}
       <td style="text-align: center;">{{t}}</td>
@@ -137,7 +137,7 @@
       <td style="text-align: center;">{{key}}</td>
     </tr>
     {% endfor %}
-    {% endfor %}
+  {% endfor %}
   </table>
 
 </body>

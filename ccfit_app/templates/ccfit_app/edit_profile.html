@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% load widget_tweaks %}
-
-
 {% block body_block %}
-<div class="container">
-    <h1>EDIT PROFILE</h1>
 
-    <form class="user"  method="post" id="loginForm">
-        {% csrf_token %}
-        <p>{{form.email.label}}: {% render_field form.email %}</p>
-        <p>{{form.first_name.label}}: {% render_field form.first_name %}</p>
-        <p>{{form.last_name.label}}: {% render_field form.last_name %}</p>
-        <p><a href="{% url 'ccfit_app:change_password' %}">Click here</a> to change the user password</p>
-        <button type="subtmit" class="font-weight-bold btn btn-warning btn-block">Edit Profile</button>
-    </form>
-</div>
+<script>
+  var perfEntries = performance.getEntriesByType("navigation");
+  if (perfEntries[0].type === "back_forward") {
+    location.reload(true);
+  }
+</script>
+
+
+<section class="box-center">
+    <div class="content">
+        <h2 class="heading-2">Edit Settings</h2>
+        <form method="post" id="loginForm">
+          <div class="content">
+            {% csrf_token %}
+            {% render_field form.email class="box__input box__input-1" placeholder="E-mail" %}
+            {% render_field form.first_name class="box__input box__input-1" placeholder="First Name" %}
+            {% render_field form.last_name class="box__input box__input-1" placeholder="Last Name"%}
+            <a class="btn-2" href="{% url 'ccfit_app:change_password' %}" placeholder="Password">Click here to change the user password</a></p>
+            <button type="subtmit" class="btn btn__2c">Edit Profile</button>
+          </div>
+        </form>
+    </div>
+</section>
+
+
+
 {% endblock %}

@@ -13,7 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from datetime import datetime, timedelta
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
-from .decorators import user_all_classes, user_workout, admin_only
+from .decorators import user_all_classes, user_workout, admin_only, admin_teacher_only
 from django.utils.decorators import method_decorator
 from django.template.loader import get_template
 from django.contrib.staticfiles import finders
@@ -39,7 +39,7 @@ def Payment_request(request):
 	# Enrollment fee
 	if request.session['type_payment'] == '1':
 		amount = 30
-		description = 'enrollment fee'
+		description = 'enrolment fee'
 	else:
 		# Monthly payment
 		user = UserProfileInfo.objects.get(email=request.user)
@@ -67,7 +67,7 @@ def Payment_request(request):
 
 		#Updating status and data for that users payment
 		if request.session['type_payment'] == '1':
-			verify_enrollment = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+			verify_enrollment = Invoice.objects.get(email=request.user, type='ENROLMENT FEE')
 			today_date = datetime.today().strftime('%Y-%m-%d')
 			today_date_object = datetime.strptime(today_date, '%Y-%m-%d').date()
 			future_30days = str(today_date_object + timedelta(days = 30))
@@ -76,6 +76,9 @@ def Payment_request(request):
 			verify_enrollment.to_date = future_30days_DATE
 			verify_enrollment.status = 'PAID'
 			verify_enrollment.save()
+			email_user = str(request.user)
+			message = 'Dear ' + str(verify_enrollment.email) + '\nThank you for trusting CCFIT to be your gym. \nThis is your receipt for paying €' +  str(verify_enrollment.cost) + ' regarding the ' + verify_enrollment.type
+			send_mail('CCFIT Invoice: ' + str(verify_enrollment.from_date) + ' - ' + str(verify_enrollment.to_date), message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
 		else:
 			# this if is for the monthly payment
 			verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT', status='REQUESTED').order_by('from_date')
@@ -88,7 +91,9 @@ def Payment_request(request):
 					message = 'Dear ' + str(verify_enrollment_unique.email) + '\nThank you for trusting CCFIT to be your gym. \nThis is your receipt for paying €' +  str(verify_enrollment_unique.cost) + ' regarding the ' + verify_enrollment_unique.type
 					send_mail('CCFIT Invoice: ' + str(verify_enrollment_unique.from_date) + ' - ' + str(verify_enrollment_unique.to_date), message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
 					break
+	request.session['bar'] = 'PAID'
 	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+	# return render(request, 'ccfit_app/index.html')
 
 
 # Function for the button in the generate invoice page
@@ -121,31 +126,32 @@ def SendInvoice(request, pk):
 # shows the info for the user before paying
 @login_required
 def Payment(request, type):
-    request.session['type_payment'] = type
-    user = UserProfileInfo.objects.get(email=request.user)
+	request.session['bar'] = ''
+	request.session['type_payment'] = type
+	user = UserProfileInfo.objects.get(email=request.user)
 	# Checking if is enrollment fee or montly payment
-    if request.session['type_payment'] == '1':
-        description = 'ENROLLMENT FEE'
-        invoice = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
-        from_date = invoice.from_date
-        to_date = invoice.to_date
-        year = invoice.year
-        cost = invoice.cost
-        pk = invoice.pk
-    else:
+	if request.session['type_payment'] == '1':
+		description = 'ENROLMENT FEE'
+		invoice = Invoice.objects.get(email=request.user, type='ENROLMENT FEE')
+		from_date = invoice.from_date
+		to_date = invoice.to_date
+		year = invoice.year
+		cost = invoice.cost
+		pk = invoice.pk
+	else:
 		# If for the monthly payment
-        description = 'MONTHLY PAYMENT'
-        invoice = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT', status='REQUESTED').order_by('from_date')
-        if invoice.exists():
-            for course in invoice:
-                from_date = course.from_date
-                to_date = course.to_date
-                year = course.year
-                cost = course.cost
-                pk = course.pk
-                break
-    context = {'pk': pk, 'nickname':user.nickname, 'email': request.user, 'from_date':from_date, 'to_date': to_date, 'cost':cost,'subscription':description, 'year':year }
-    return render(request, 'ccfit_app/payment.html', context)
+		description = 'MONTHLY PAYMENT'
+		invoice = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT', status='REQUESTED').order_by('from_date')
+		if invoice.exists():
+			for course in invoice:
+				from_date = course.from_date
+				to_date = course.to_date
+				year = course.year
+				cost = course.cost
+				pk = course.pk
+				break
+	context = {'pk': pk, 'nickname':user.nickname, 'email': request.user, 'from_date':from_date, 'to_date': to_date, 'cost':cost,'subscription':description, 'year':year }
+	return render(request, 'ccfit_app/payment.html', context)
 
 
 # Invoice page
@@ -154,6 +160,18 @@ class InvoiceListView(LoginRequiredMixin, ListView):
 	template_name = "ccfit_app/invoices.html"
 	model = Invoice
 	context_object_name = "invoices"
+
+
+	def get_queryset(self):
+		print("FAZ A BUSCA PADRAO DO FILTRO")
+		email = self.request.GET.get('search')
+		print(email, 'thats the email')
+		object_list = self.model.objects.all()
+		print(object_list)
+		if email:
+			object_list = object_list.filter(email__contains=email)
+		return object_list
+
 
 # This function allows the functions of creation of the pdf
 # to have images and other resources
@@ -221,7 +239,8 @@ class PDF(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
 		class_number = str(request.session['class'])
-		list = [1,2,3,4,5]
+		print(class_number)
+		list = [1,2,3,4,5,6]
 		list_user = []
 		data_second, major = {},{}
 		for num in list:
@@ -240,7 +259,7 @@ class PDF(LoginRequiredMixin, View):
 				major = {}
 
 		context = {"work" : Workout.objects.filter(date=self.request.session['value']).order_by('session_number')}
-
+		print(data_second)
 		pdf = render_to_pdf('ccfit_app/pdf/pdf_template.html', {'data': data_second})
 
 		return HttpResponse(pdf, content_type='application/pdf')
@@ -252,7 +271,7 @@ class DownloadPDF(LoginRequiredMixin, View):
 	def get(self, request, *args, **kwargs):
 		dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
 		class_number = str(request.session['class'])
-		list = [1,2,3,4,5]
+		list = [1,2,3,4,5,6]
 		list_user = []
 		data_second, major = {},{}
 		for num in list:
@@ -285,6 +304,7 @@ def Confirmation_Booking(request, n1):
 # Process all the bookings for each user since the first class
 @login_required
 def MyBookings(request):
+    request.session['bar'] = ''
     models = [Workout, Pilates, Spin, Yoga, Jump]
     data, new = {}, {}
     sessions = {'1': 'from 06:00 to 08:00','2': 'from 09:00 to 11:00','3': 'from 12:00 to 14:00','4': 'from 15:00 to 17:00','5': 'from 18:00 to 20:00', '6': 'from 21:00 to 23:00'}
@@ -303,7 +323,7 @@ def MyBookings(request):
 # Function that validates the date
 # for the booking session
 @login_required
-@admin_only
+@admin_teacher_only
 def Validate_date_check(request):
     if request.is_ajax():
         global date
@@ -367,12 +387,12 @@ def Check_Class_Amount(request, session):
 
 # Displays the amount the users per session
 @login_required
-@admin_only
+@admin_teacher_only
 def ClassesCountView(request, class_number):
     cancel = User.objects.filter(email=request.user)
     if cancel.exists():
         dict = {'1': Workout,'2': Pilates,'3': Jump,'4': Spin,'5': Yoga}
-        list = [1,2,3,4,5]
+        # list = [1,2,3,4,5,6]
         request.session['class'] = class_number
         context = {'session_1': {'start':'06:00', 'finish':'08:00', 'session_number': 1, '1': 0, 'enable':False},
                 'session_2': { 'start':'09:00', 'finish':'11:00', 'session_number': 2, '2': 0, 'enable':False},
@@ -845,7 +865,7 @@ def invoice_insertion(request):
 			cost = 35
 		else:
 			cost = 50
-		verify = Invoice.objects.get(email=request.user, type='ENROLLMENT FEE')
+		verify = Invoice.objects.get(email=request.user, type='ENROLMENT FEE')
 		today_date = datetime.today().strftime('%Y-%m-%d')
 		today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
 		time = datetime.today().strftime('%H:%M:%S')
@@ -867,7 +887,7 @@ def invoice_insertion(request):
 				update_invoice.save()
 		else:
 			flag_found = True
-			dates = Invoice.objects.get(email=request.user, type="ENROLLMENT FEE")
+			dates = Invoice.objects.get(email=request.user, type="ENROLMENT FEE")
 			year = dates.year
 			to_date_invoice = dates.to_date
 			while flag_found:
@@ -1155,12 +1175,13 @@ def Check_Booking_workout(request, session):
 # Bookingpage for selecting the section
 @login_required
 def BookingPage(request):
-    form = ExampleForm()
-    return render(request, 'ccfit_app/booking_page.html', {'form':form})
+	request.session['bar'] = ''
+	form = ExampleForm()
+	return render(request, 'ccfit_app/booking_page.html', {'form':form})
 
 # Function that redirects to the check_classes page
 @login_required
-@admin_only
+@admin_teacher_only
 def CheckingPage(request):
     form = ExampleForm()
     return render(request, 'ccfit_app/check_classes.html', {'form':form})
@@ -1184,11 +1205,13 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
     success_url = reverse_lazy('ccfit:index')
 
 	# Runs as soon as the page is opened
+	# Runs as soon as the page is opened
     def get(self, request, pk):
+        request.session['bar'] = ''
         obj = get_object_or_404(UserProfileInfo, pk = pk)
         form = ProfilePageForm(instance = obj)
         return render(request, 'ccfit_app/edit_profile_page.html', {
-        'form': form
+        'form': form,
     })
 
 	# Runs when the submit is pressed
@@ -1201,29 +1224,31 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
             profile.active = profile.membership
 			# Validates the date and hour so the user can use it as
 			# audit info
-            today_date = datetime.today().strftime('%Y-%m-%d')
-            today_date_object = datetime.strptime(today_date, '%Y-%m-%d').date()
-            currentYear = int(datetime.now().year)
-            verify_enrollment = Invoice.objects.filter(email=profile.email, type='ENROLLMENT FEE')
-            future_30days=str(today_date_object + timedelta(days = 30))
-            future_30days = datetime.strptime(future_30days, '%Y-%m-%d').date()
-            if not verify_enrollment.exists():
-                today_date = datetime.today().strftime('%Y-%m-%d')
-                today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
-                time = datetime.today().strftime('%H:%M:%S')
-                time_audit = datetime.strptime(time, '%H:%M:%S').time()
-				# Inserting the data retrieved to the invoice table creating the
-				# first invoice 'ENROLLMENT FEE' as soon as the user creates the profile
-                p = Invoice(email=profile.email,
-	            			 from_date=today_date_object,
-							 to_date=future_30days,
-	            			 year=currentYear,
-	            			 cost=30,
-	            			 type="ENROLLMENT FEE",
-	            			 status="GENERATE",
-							 date_audit=today_date_audit,
-							 hour_audit=time_audit)
-                p.save(force_insert=True)
+            user = UserProfileInfo.objects.get(email=request.user)
+            if user.type == 'USER':
+	            today_date = datetime.today().strftime('%Y-%m-%d')
+	            today_date_object = datetime.strptime(today_date, '%Y-%m-%d').date()
+	            currentYear = int(datetime.now().year)
+	            verify_enrollment = Invoice.objects.filter(email=profile.email, type='ENROLMENT FEE')
+	            future_30days=str(today_date_object + timedelta(days = 30))
+	            future_30days = datetime.strptime(future_30days, '%Y-%m-%d').date()
+	            if not verify_enrollment.exists():
+	                today_date = datetime.today().strftime('%Y-%m-%d')
+	                today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
+	                time = datetime.today().strftime('%H:%M:%S')
+	                time_audit = datetime.strptime(time, '%H:%M:%S').time()
+					# Inserting the data retrieved to the invoice table creating the
+					# first invoice 'ENROLLMENT FEE' as soon as the user creates the profile
+	                p = Invoice(email=profile.email,
+		            			 from_date=today_date_object,
+								 to_date=future_30days,
+		            			 year=currentYear,
+		            			 cost=30,
+		            			 type="ENROLMENT FEE",
+		            			 status="GENERATE",
+								 date_audit=today_date_audit,
+								 hour_audit=time_audit)
+	                p.save(force_insert=True)
             profile.save()
             return HttpResponseRedirect(reverse_lazy('ccfit:index'))
         else:
@@ -1242,16 +1267,21 @@ def password_sucess(request):
 
 
 def LoginView(request):
+	request.session['bar'] = ''
+	print('GOT HERE IN THE LOGINVIEW')
 	if request.method == 'POST':
-	    email = request.POST.get('email')
-	    password = request.POST.get('password')
+		print(request.POST.get('email'))
+		print(request.POST.get('password'))
+		email = request.POST.get('email')
+		password = request.POST.get('password')
 		# Authenticating the user
-	    user = authenticate(request, email=email, password=password)
-	    if user is not None:
-	        login(request, user)
-	        return HttpResponseRedirect(reverse_lazy('ccfit:index'))
-	    else:
-	        return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+		user = authenticate(request, email=email, password=password)
+		print(user)
+		if user is not None:
+			login(request, user)
+			return HttpResponseRedirect(reverse_lazy('ccfit:index'))
+		else:
+			return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 	context = {}
 	return render(request, 'ccfit_app/login.html', context)
 
@@ -1293,11 +1323,14 @@ def create_user(request):
 
 # Edit profile
 class EditProfile(LoginRequiredMixin, generic.UpdateView):
+
     form_class = forms.EditProfileForm
     success_url = reverse_lazy('ccfit:index')
     template_name = "ccfit_app/edit_profile.html"
 
     def get_object(self):
+        self.request.session['bar'] = ''
+        print('CHEEEECK IFSS GOTTEN EHEHHHHHHHHHHHERE')
         return self.request.user
 
 
@@ -1318,7 +1351,7 @@ def index(request):
             registered = course.registration_completed
             nickname = course.nickname
 	#invoice info for enrollment fee
-    verify_enrollment = Invoice.objects.filter(email=request.user, type='ENROLLMENT FEE')
+    verify_enrollment = Invoice.objects.filter(email=request.user, type='ENROLMENT FEE')
     if verify_enrollment.exists():
         for course in verify_enrollment:
             status = course.status

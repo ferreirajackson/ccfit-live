@@ -1,49 +1,79 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-    <h1>WELCOME TO COUNT CLASSES {{title}}</h1>
-    <a href="{% url 'ccfit_app:index' %}">Home</a>
 
-{% if show_buttons %}
-    {% if session_1.enable %}
-    <div class="">
-      <b>{{session_1.start}} - {{session_1.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=1 %}'" name="button">{{session_1.1}}</button>
-    </div>
+
+<div class="box-count">
+  <div class="count-classes">
+      <h2 class="heading-2">Cont classes</h2>
+
+      {% if show_buttons %}
+        {% if session_1.enable %}
+        <div class="line">
+          <div class="line__time">{{session_1.start}} - {{session_1.finish}}</div>
+          <div class="line__count">
+            <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=1 %}'"  name="button">{{session_1.1}}</button>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if session_2.enable %}
+        <div class="line">
+          <div class="line__time">{{session_2.start}} - {{session_2.finish}}</div>
+          <div class="line__count">
+            <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=2 %}'"  name="button">{{session_2.2}}</button>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if session_3.enable %}
+        <div class="line">
+          <div class="line__time">{{session_3.start}} - {{session_3.finish}}</div>
+          <div class="line__count">
+            <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=3 %}'"  name="button">{{session_3.3}}</button>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if session_4.enable %}
+        <div class="line">
+          <div class="line__time">{{session_4.start}} - {{session_4.finish}}</div>
+          <div class="line__count">
+            <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=4 %}'"  name="button">{{session_4.4}}</button>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if session_5.enable %}
+        <div class="line">
+          <div class="line__time">{{session_5.start}} - {{session_5.finish}}</div>
+          <div class="line__count">
+            <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=5 %}'"  name="button">{{session_5.5}}</button>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if session_6.enable %}
+        <div class="line">
+          <div class="line__time">{{session_6.start}} - {{session_6.finish}}</div>
+          <div class="line__count">
+            <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=6 %}'"  name="button">{{session_6.6}}</button>
+          </div>
+        </div>
+        {% endif %}
+
+        <a class="btn btn__2c btn-line" href="{% url 'ccfit_app:pdf_view' %}" target="_blank">View Schedule PDF</a>
+        <a class="btn btn__2c btn-line"  href="{% url 'ccfit_app:pdf_download' %}">Download Schedule PDF</a>
+
+    {% else %}
+    <h2 class="heading-2 message">No classes for the selected date</h2>
     {% endif %}
 
-    {% if session_2.enable %}
-    <div class="">
-      <b>{{session_2.start}} - {{session_2.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=2 %}'"  name="button">{{session_2.2}}</button>
-    </div>
-    {% endif %}
 
-    {% if session_3.enable %}
-    <div class="">
-      <b>{{session_3.start}} - {{session_3.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=3 %}'"  name="button">{{session_3.3}}</button>
-    </div>
-    {% endif %}
 
-    {% if session_4.enable %}
-    <div class="">
-      <b>{{session_4.start}} - {{session_4.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=4 %}'"  name="button">{{session_4.4}}</button>
-    </div>
-    {% endif %}
+  </div>
+</div>
 
-    {% if session_5.enable %}
-    <div class="">
-      <b>{{session_5.start}} - {{session_5.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=5 %}'"  name="button">{{session_5.5}}</button>
-    </div>
-    {% endif %}
 
-    {% if session_6.enable %}
-    <div class="">
-      <b>{{session_6.start}} - {{session_6.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_class_amount' session=6 %}'" name="button">{{session_6.6}}</button>
-    </div>
-    {% endif %}
-    <a class="btn btn-info" href="{% url 'ccfit_app:pdf_view' %}" target="_blank">View Schedule PDF</a>
-    <a class="btn btn-info"  href="{% url 'ccfit_app:pdf_download' %}">Download Schedule PDF</a>
 
-{% else %}
-<h2>No classes for the selected date</h2>
-{% endif %}
 {% endblock %}

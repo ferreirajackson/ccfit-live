@@ -2,26 +2,34 @@
 {% extends 'ccfit_app/base.html' %}
 {% load static %}
 {% load widget_tweaks %}
-
-
 {% block body_block %}
 
-<div class="container">
-    <h1>EDIT PROFILE PAGE</h1>
+<script>
+  var perfEntries = performance.getEntriesByType("navigation");
+  if (perfEntries[0].type === "back_forward") {
+    location.reload(true);
+  }
+</script>
 
-    <form class="user"  method="post" id="loginForm">
-        {% csrf_token %}
-        <p>{{form.nickname.label}}: {% render_field form.nickname %}</p>
-        <p>{{form.gender.label}}: {% render_field form.gender %}</p>
-        <p>{{form.birth_date.label}}: {% render_field form.birth_date type="date"%}</p>
-        <p>{{form.address1.label}}: {% render_field form.address1 %}</p>
-        <p>{{form.address2.label}}: {% render_field form.address2 %}</p>
-        <p>{{form.county.label}}: {% render_field form.county %}</p>
-        <p>{{form.country.label}}: {% render_field form.country %}</p>
-        <p>{{form.prefix.label}}: {% render_field form.prefix %}</p>
-        <p>{{form.phone.label}}: {% render_field form.phone %}</p>
-        <p>{{form.membership.label}}: {% render_field form.membership %}</p>
-        <button type="submit" class="font-weight-bold btn btn-warning btn-block">Edit Profile</button>
-    </form>
-</div>
+<section class="box-center">
+    <div class="content">
+        <h2 class="heading-2">Edit Profile</h2>
+        <form method="post" id="loginForm">
+          <div class="content">
+            {% csrf_token %}
+            {% render_field form.nickname class="box__input box__input-1" placeholder="Nickname" %}
+            {% render_field form.gender class="box__input box__input-2"  placeholder="Gender" %}
+            {% render_field form.birth_date type="date" class="box__input box__input-3" placeholder="Birth date" %}
+            {% render_field form.address1 class="box__input box__input-4" placeholder="Address 1" %}
+            {% render_field form.address2 class="box__input box__input-5" placeholder="Address 2" %}
+            {% render_field form.county class="box__input box__input-6" placeholder="County" %}
+            {% render_field form.country class="box__input box__input-7" placeholder="Country" %}
+            {% render_field form.prefix class="box__input box__input-8" placeholder="Prefix" %}
+            {% render_field form.phone class="box__input box__input-9" placeholder="Phone" %}
+            {% render_field form.membership class="box__input box__input-1" placeholder="Membership" %}
+            <button type="submit" class="btn btn__2c">Save changes</button>
+          </div>
+        </form>
+    </div>
+</section>
 {% endblock %}

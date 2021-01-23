@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-<h1>THATS THE MANAGE USERS PAGE</h1>
-<a href="{% url 'ccfit_app:index' %}">Home</a>
-<p></p>
-<form method="GET">
-  <div class="input-group-prepend">
-    <button class="btn btn-outline-secondary" type="submit" id="button-addon1">Search</button>
-  </div>
-  <input type="text" placeholder="Type the email" name="search" id="search">
-  <div class="table-responsive">
-    <table class="table table-hover border rounded shadow-sm bg-white" id="dataTable" width="100%" cellspacing="0">
+<div class="box-invoice">
+  <form method="GET">
+    <div class="search">
+      <input type="text" placeholder="Type the email" name="search" id="button-addon1" class="search__input">
+      <button type="submit" id="button-addon1" class="search__btn" >Search</button>
+    </div>
+    <table class="table" id="dataTable" width="100%" cellspacing="0">
       <thead>
-        <tr class="bg-primary text-white">
-          <th style="min-width:20px">Email</th>
-          <th style="min-width:110px">Gender</th>
-          <th style="min-width:80px">Type</th>
-          <th style="min-width:80px">Active</th>
+        <tr>
+          <th class="table__header">Email</th>
+          <th class="table__header">Gender</th>
+          <th class="table__header">Type</th>
+          <th class="table__header">Active</th>
+          <th class="table__header">Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for user in users %}
         <tr>
-          <td>{{ user.email }}</td>
-          <td>{{ user.gender }}</td>
-          <td>{{ user.type }}</td>
-          <td>{{ user.active }}</td>
-          <td>
-          <div align="center">
-              <button type="button" class="update btn btn-warning btn-circle btn-sm shadow-sm" onclick="location.href='{% url 'ccfit_app:update_user' user.pk %}'"  title="Editar informações do cliente">
-                <span class="fa fa-edit">Update</span>
+          <td class="table__item">{{ user.email }}</td>
+          <td class="table__item">{{ user.gender }}</td>
+          <td class="table__item">{{ user.type }}</td>
+          <td class="table__item">{{ user.active }}</td>
+          <td class="table__item">
+            <div class="icon-group">
+              <button type="button" class="btn btn__small" onclick="location.href='{% url 'ccfit_app:update_user' user.pk %}'"  title="Editar informações do cliente">
+                Update
               </button>
-          </div>
-        </td>
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
-  </div>
-</form>
+  </form>
+</div>
+
 {% endblock %}

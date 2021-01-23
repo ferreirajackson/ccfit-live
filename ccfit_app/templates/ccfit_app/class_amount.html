@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-    <h1>WELCOME TO CLASS AMOUNT </h1>
-
-    <h5>List of users for this section:</h5>
-    <table>
+<div class="box-amount">
+    <div class="count-amount">
+      <h2 class="heading-2">List of users for this section:</h2>
+      <table class="table">
         <tr>
-            <td>email</td>
-            <td>name</td>
-            <td>class type</td>
+          <td class="table__header">email</td>
+          <td class="table__header">name</td>
+          <td class="table__header">class type</td>
         </tr>
 
         {% for key, values in data.items %}
         <tr>
-            <td>{{key}}</td>
-            {% for v in values %}
-            <td>{{v}}</td>
-            {% endfor %}
+          <td class="table__item">{{key}}</td>
+          {% for v in values %}
+          <td class="table__item">{{v}}</td>
+          {% endfor %}
         </tr>
         {% endfor %}
-    </table>
+      </table>
+    </div>
 
 {% endblock %}

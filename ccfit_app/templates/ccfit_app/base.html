@@ -4,16 +4,72 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="../../../static/css/style.css"> -->
+    <link rel="stylesheet" href="../../../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;500;600;900&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
     <title>ccfit</title>
   </head>
   <body>
     <div class="container">
+      <section class="box-home">
+        <nav class="navbar">
+          <a href="{% url 'ccfit_app:index' %}"><img src="../../../static/img/logo-small.png" alt="" class="navbar__logo"></a>
+
+          {% if user.is_authenticated %}
+            <a href="{% url 'ccfit_app:edit_profile' %}" class="navbar__button">Edit Settings</a>
+            {% if user.userprofileinfo.id %}
+            <a href="{% url 'ccfit_app:edit_profile_page' user.userprofileinfo.id %}" class="navbar__button">Edit Profile</a>
+            {% else %}
+            <a href="{% url 'ccfit_app:create_profile_page' %}" class="navbar__button">Create Profile Page</a>
+            {% endif %}
+          {% else %}
+              <a href="{% url 'ccfit_app:login' %}" class="navbar__button">Login</a>
+                <a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple" class="navbar__button">Sign Up</a>
+          {% endif %}
+          <a href="{% url 'ccfit_app:logout' %}" class="navbar__button">Logout</a>
+
+            {% if nickname == None %}
+              <div class="navbar__user-name">CCfit Gym</div>
+            {% else %}
+              <div class="navbar__user-name">Welcome {{ nickname }}</div>
+            {% endif %}
+
+
+          {% if type != None %}
+            {% if type == 'USER' %}
+              <!-- {% if status == 'GENERATE' %} -->
+              <!-- <a href="{% url 'ccfit_app:payment' type=1 %}">Pay enrollment fee</a> -->
+              <!-- {% endif %} -->
+
+              <div class="navbar__user">{{ type }}</div>
+
+
+            {% elif type == 'TEACHER'  %}
+              <div class="navbar__user">{{ type }}</div>
+              <!-- <a href="{% url 'ccfit_app:check_classes' %}">Check classes</a> -->
+            {% else  %}
+              <!-- <a href="{% url 'ccfit_app:check_classes' %}">Check classes</a>
+              <a href="{% url 'ccfit_app:invoices' %}">Generate Invoice</a> -->
+              <div class="navbar__user">{{ type }}</div>
+            {% endif %}
+          {% endif %}
+
+          <!-- <div class="navbar__user">user</div> -->
+        </nav>
+      </section>
 
       {% block body_block %}
       {% endblock %}
 
+    </div>
+    <div class="footer">
+      <div class="footer__button footer__button-1">About us</div>
+      <div class="footer__button footer__button-2">Privacy</div>
+      <div class="footer__button footer__button-3">Join us!</div>
+      <div class="footer__button footer__button-4">Careers</div>
+      <div class="footer__copyright">&copy; Copyright - All rights reserved - 2021</div>
     </div>
   </body>
 </html>

@@ -84,6 +84,21 @@ class UserProfileInfo(models.Model):
     ('Female','Female'),
     )
 
+    GENDER = (
+    ('Male','Male'),
+    ('Female','Female'),
+    )
+
+    PREFIX = (
+    ('+353','+353'),
+    ('+44','+44'),
+    ('+39','+39'),
+    ('+33','+33'),
+    ('+351','+351'),
+    ('+34','+34'),
+    )
+
+
     user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     email = models.EmailField(max_length=80,null=True)
     nickname = models.CharField(max_length=50,null=True)
@@ -95,7 +110,7 @@ class UserProfileInfo(models.Model):
     address2 = models.CharField(max_length=300,null=True)
     county = models.CharField(max_length=20,null=True)
     country = models.CharField(max_length=20,null=True)
-    prefix = models.CharField(max_length=4,null=True)
+    prefix = models.CharField(max_length=4, choices = PREFIX, null=True)
     phone = models.CharField(max_length=10,null=True)
     registration_completed = models.BooleanField(default=False)
     membership = models.CharField(max_length=15, choices = TYPE_MEMBERSHIP, null=True)
@@ -126,7 +141,7 @@ class MaxSession(models.Model):
 # Invoice table
 class Invoice(models.Model):
     TYPE = (
-    ('ENROLLMENT FEE','ENROLLMENT FEE'),
+    ('ENROLMENT FEE','ENROLMENT FEE'),
     ('MONTHLY PAYMENT','MONTHLY PAYMENT'),
     )
 

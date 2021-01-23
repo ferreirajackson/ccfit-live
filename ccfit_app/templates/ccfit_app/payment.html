@@ -2,81 +2,80 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
 
-<style type="text/css">
-  .StripeElement {
-    box-sizing: border-box;
+<div class="box-invoice">
+  <style type="text/css">
+    .StripeElement {
+      box-sizing: border-box;
 
-    height: 40px;
+      height: 40px;
 
-    padding: 10px 12px;
+      padding: 10px 12px;
 
-    border: 1px solid transparent;
-    border-radius: 4px;
-    background-color: white;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      background-color: white;
 
-    box-shadow: 0 1px 3px 0 #e6ebf1;
-    -webkit-transition: box-shadow 150ms ease;
-    transition: box-shadow 150ms ease;
-  }
+      box-shadow: 0 1px 3px 0 #e6ebf1;
+      -webkit-transition: box-shadow 150ms ease;
+      transition: box-shadow 150ms ease;
+    }
 
-  .StripeElement--focus {
-    box-shadow: 0 1px 3px 0 #cfd7df;
-  }
+    .StripeElement--focus {
+      box-shadow: 0 1px 3px 0 #cfd7df;
+    }
 
-  .StripeElement--invalid {
-    border-color: #fa755a;
-  }
+    .StripeElement--invalid {
+      border-color: #fa755a;
+    }
 
-  .StripeElement--webkit-autofill {
-    background-color: #fefde5 !important;
-  }
-</style>
+    .StripeElement--webkit-autofill {
+      background-color: #fefde5 !important;
+    }
+  </style>
 
-<script src="https://js.stripe.com/v3/"></script>
+  <script src="https://js.stripe.com/v3/"></script>
 
-<table>
-  <tr>
-    <td>Email</td>
-    <td>Nickname</td>
-    <td>From date</td>
-    <td>To date</td>
-    <td>Year</td>
-    <td>Cost</td>
-    <td>Subscription</td>
-  </tr>
+  <table class="table">
+    <tr>
+      <td class="table__header">Email</td>
+      <td class="table__header">Nickname</td>
+      <td class="table__header">From date</td>
+      <td class="table__header">To date</td>
+      <td class="table__header">Year</td>
+      <td class="table__header">Cost</td>
+      <td class="table__header">Subscription</td>
+    </tr>
+    <tr>
+      <td class="table__item">{{ email }}</td>
+      <td class="table__item">{{ nickname }}</td>
+      <td class="table__item">{{ from_date }}</td>
+      <td class="table__item">{{ to_date }}</td>
+      <td class="table__item">{{ year }}</td>
+      <td class="table__item">{{ cost }}</td>
+      <td class="table__item">{{ subscription }}</td>
+    </tr>
+  </table>
+<button  class="btn btn__2c" type="button" onclick="location.href='{% url 'ccfit_app:invoice_user' pk %}'"  name="button">View Invoice</button>
 
-  <tr>
-    <td>{{ email }}</td>
-    <td>{{ nickname }}</td>
-    <td>{{ from_date }}</td>
-    <td>{{ to_date }}</td>
-    <td>{{ year }}</td>
-    <td>{{ cost }}</td>
-    <td>{{ subscription }}</td>
-  </tr>
-</table>
-<a class="btn btn-info" href="{% url 'ccfit_app:invoice_user' pk %}" target="_blank">View Invoice</a>
+  <div class="box-classes">
+  <form class="form-payment" action="{% url 'ccfit_app:payment_request' %}" method="post" id="payment-form">
+    {% csrf_token %}
+    <input class="box__input margin-top" required type="text" name="email" id="email" onblur="checkEmail(this.value)" placeholder="someone@example.com">
+    <input class="box__input" required type="text" name="nickname" placeholder="nickname...">
+    <div class="form-row">
+      <h2 class="heading-2">Credit or Debit Card</h2>
+      <div id="card-element"></div>
 
-<form action="{% url 'ccfit_app:payment_request' %}" method="post" id="payment-form">
-  {% csrf_token %}
-
-
-  <input required type="text" name="email" id="email" onblur="checkEmail(this.value)" placeholder="someone@example.com">
-  <input required type="text" name="nickname" placeholder="nickname...">
-  <div class="form-row">
-    <label for="card-element">
-      Credit or debit card
-    </label>
-    <div id="card-element">
-      <!-- A Stripe Element will be inserted here. -->
+      <!-- Used to display form errors. -->
+      <div id="card-errors" role="alert"></div>
     </div>
 
-    <!-- Used to display form errors. -->
-    <div id="card-errors" role="alert"></div>
-  </div>
+    <button class="btn btn__2c" id="payment" disabled>Submit Payment</button>
+  </form>
+</div>
+</div>
 
-  <button id="payment" disabled>Submit Payment</button>
-</form>
+
 
 <script>
   function checkEmail(str) {

@@ -53,6 +53,9 @@ class EditProfileForm(UserChangeForm):
 
 
 class UserCreateForm(UserCreationForm):
+    first_name = forms.CharField(required=True, max_length=100)
+    last_name = forms.CharField(required=True, max_length=100)
+
     class Meta:
         fields=('email','first_name','last_name', 'password1', 'password2')
         model = get_user_model()

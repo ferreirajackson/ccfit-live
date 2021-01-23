@@ -24,7 +24,7 @@ def user_all_classes(view_func):
     return wrap
 
 
-# This decorator allows only workout user to access the pages 
+# This decorator allows only workout user to access the pages
 # in which will have the tag @user_workout at
 def user_workout(view_func):
     def wrap(request, *args, **kwargs):
@@ -48,6 +48,15 @@ def admin_only(view_func):
     def wrap(request, *args, **kwargs):
         user = UserProfileInfo.objects.get(email=request.user)
         if user.type == 'ADMINISTRATOR':
+            return view_func(request, *args, **kwargs)
+        else:
+            return render(request, 'ccfit_app/permission_denied.html')
+    return wrap
+
+def admin_teacher_only(view_func):
+    def wrap(request, *args, **kwargs):
+        user = UserProfileInfo.objects.get(email=request.user)
+        if user.type == 'ADMINISTRATOR' or user.type == 'TEACHER':
             return view_func(request, *args, **kwargs)
         else:
             return render(request, 'ccfit_app/permission_denied.html')

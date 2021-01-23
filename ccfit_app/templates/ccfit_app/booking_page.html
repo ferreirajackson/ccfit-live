@@ -1,32 +1,81 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-<h1>THATS THE BOOKING PAGE</h1>
-<a href="{% url 'ccfit_app:index' %}">Home</a>
-<input type="date" id="date-input" required>
-<button id="submit">Select date</button>
-<p></p>
-<!--{{ form.my_date_field }}-->
-<button type="button" onclick="location.href='{% url 'ccfit_app:workout' %}'" id='workout' name="button">Workout</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:pilates' %}'" id='pilates' name="button">Pilates</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:jump' %}'" id='jump' name="button">Jump</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:spin' %}'" id='spin' name="button">Spin</button>
-<button type="button" onclick="location.href='{% url 'ccfit_app:yoga' %}'" id='yoga' name="button">Yoga</button>
-
-
 
 <script>
+  var perfEntries = performance.getEntriesByType("navigation");
+  if (perfEntries[0].type === "back_forward") {
+    location.reload(true);
+  }
+</script>
+
+<div class="" id="message"></div>
+<div class="box-classes">
+  <div class="classes">
+    <h2 class="heading-2">Booking page</h2>
+    <input type="date" class="box__input date__classes" id="date-input" required>
+    <button class="btn btn__date" id="submit">Select date</button>
+
+    <button type="button" onclick="location.href='{% url 'ccfit_app:workout' %}'" id='workout' name="button" class="classes__btn classes__btn-1">
+      <div class="classes__book">
+        <div class="classes__name">Workout</div>
+      </div>
+    </button>
+
+    <button type="button" onclick="location.href='{% url 'ccfit_app:pilates' %}'" id='pilates' name="button" class="classes__btn classes__btn-2">
+      <div class="classes__book">
+        <div class="classes__name">Pilates</div>
+      </div>
+    </button>
+
+    <button type="button" onclick="location.href='{% url 'ccfit_app:spin' %}'" id='spin' name="button" class="classes__btn classes__btn-3">
+      <div class="classes__book">
+        <div class="classes__name">Spin</div>
+      </div>
+    </button>
+
+    <button type="button" onclick="location.href='{% url 'ccfit_app:jump' %}'" id='jump' name="button" class="classes__btn classes__btn-4">
+      <div class="classes__book">
+        <div class="classes__name">Jump</div>
+      </div>
+    </button>
+
+    <button type="button" onclick="location.href='{% url 'ccfit_app:yoga' %}'" id='yoga' name="button" class="classes__btn classes__btn-5">
+      <div class="classes__book">
+        <div class="classes__name">Yoga</div>
+      </div>
+    </button>
+
+    <button type="button"  id='dance' name="button" class="classes__btn classes__btn-6">
+      <div class="classes__book">
+        <div class="classes__name">Dance</div>
+      </div>
+    </button>
+
+  </div>
+</div>
+<script>
+
 $("#workout").prop("disabled",true);
 $("#pilates").prop("disabled",true);
 $("#jump").prop("disabled",true);
 $("#spin").prop("disabled",true);
 $("#yoga").prop("disabled",true);
 
+var message = document.getElementById("message");
+
   $(document).ready(function(){
     $('#submit').on('click', function(){
       if($('#date-input').val() == ''){
-        alert('Input can not be left blank');
+
+        message.classList.add("message");
+        message.innerHTML = "Please select a date first";
+
       }else{
+
+        message.classList.remove("message");
+        message.innerHTML = "";
+
          $.ajax({
         type : 'POST',
         url: "{% url 'ccfit_app:validates' %}",

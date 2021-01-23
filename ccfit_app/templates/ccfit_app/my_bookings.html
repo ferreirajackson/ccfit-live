@@ -1,29 +1,42 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-<h1>THATS THE YOUR BOOKINGS PAGE</h1>
-<a href="{% url 'ccfit_app:index' %}">Home</a>
 
-{% if data %}
-  <table>
-      <tr>
-          <td>Date</td>
-          <td>user</td>
-          <td>session</td>
-          <td>Class</td>
-      </tr>
+<script>
+  var perfEntries = performance.getEntriesByType("navigation");
+  if (perfEntries[0].type === "back_forward") {
+    location.reload(true);
+  }
+</script>
 
-      {% for key, values in data.items %}
-      <tr>
-          <td>{{key}}</td>
+
+<div class="box-invoice">
+  <form method="GET">
+    {% if data %}
+    <table class="table" id="dataTable" width="100%" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="table__header">Date</th>
+          <th class="table__header">User</th>
+          <th class="table__header">Session</th>
+          <th class="table__header">Class</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for key, values in data.items %}
+        <tr>
+          <td class="table__item">{{key}}</td>
           {% for v in values %}
-          <td>{{v}}</td>
+          <td class="table__item">{{v}}</td>
           {% endfor %}
-      </tr>
-      {% endfor %}
-  </table>
-{% else %}
-  <h3>You haven't booked any class or workout yet</h3>
-{% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <div class="message">You haven't booked any class or workout yet</div>
+    {% endif %}
+  </form>
+</div>
 
 {% endblock %}

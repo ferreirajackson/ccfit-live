@@ -1,60 +1,72 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-<h1>THATS THE BOOKING PAGE FOR PILATES</h1>
-<a href="{% url 'ccfit_app:index' %}">Home</a>
-<input type="date" id="date-input" value="{{date}}" disabled required />
-<p></p>
-<!--{{ form.my_date_field }}-->
+
 <script>
-
-var perfEntries = performance.getEntriesByType("navigation");
-
-if (perfEntries[0].type === "back_forward") {
+  var perfEntries = performance.getEntriesByType("navigation");
+  if (perfEntries[0].type === "back_forward") {
     location.reload(true);
-}
+  }
 </script>
 
-
-{% if session_1.expired %}
-<div class="">
-  <b>{{session_1.start}} - {{session_1.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=1 %}'" name="button" {% if session_1.enable %} disabled {% endif %}>{{session_1.status}}</button>
-</div>
-{% endif %}
-
-{% if session_2.expired %}
-<div class="">
-  <b>{{session_2.start}} - {{session_2.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=2 %}'" name="button" {% if session_2.enable %} disabled {% endif %}>{{session_2.status}}</button>
-</div>
-{% endif %}
-
-{% if session_3.expired %}
-<div class="">
-  <b>{{session_3.start}} - {{session_3.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=3 %}'" name="button" {% if session_3.enable %} disabled {% endif %}>{{session_3.status}}</button>
-</div>
-{% endif %}
+<div class="box-count">
+  <div class="count-classes">
+      <h2 class="heading-2">Booking confirmation</h2>
+    <input class="box__input date__classes" type="date" id="date-input" value="{{date}}" disabled required />
 
 
-{% if session_4.expired %}
-<div class="">
-  <b>{{session_4.start}} - {{session_4.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=4 %}'" name="button" {% if session_4.enable %} disabled {% endif %}>{{session_4.status}}</button>
-</div>
-{% endif %}
+    {% if session_1.expired %}
+      <div class="line">
+        <div class="line__time">{{session_1.start}} - {{session_1.finish}}</div>
+        <div class="line__count">
+          <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=1 %}'" name="button" {% if session_1.enable %} disabled {% endif %}>{{session_1.status}}</button>
+        </div>
+      </div>
+    {% endif %}
 
+    {% if session_2.expired %}
+      <div class="line">
+        <div class="line__time">{{session_2.start}} - {{session_2.finish}}</div>
+        <div class="line__count">
+          <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=2 %}'" name="button" {% if session_2.enable %} disabled {% endif %}>{{session_2.status}}</button>
+        </div>
+      </div>
+    {% endif %}
 
+    {% if session_3.expired %}
+      <div class="line">
+        <div class="line__time">{{session_3.start}} - {{session_3.finish}}</div>
+        <div class="line__count">
+          <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=3 %}'" name="button" {% if session_3.enable %} disabled {% endif %}>{{session_3.status}}</button>
+        </div>
+      </div>
+    {% endif %}
 
-{% if session_5.expired %}
-<div class="">
-  <b>{{session_5.start}} - {{session_5.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=5 %}'" name="button" {% if session_5.enable %} disabled {% endif %}>{{session_5.status}}</button>
-</div>
-{% endif %}
+    {% if session_4.expired %}
+      <div class="line">
+        <div class="line__time">{{session_4.start}} - {{session_4.finish}}</div>
+        <div class="line__count">
+          <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=4 %}'" name="button" {% if session_4.enable %} disabled {% endif %}>{{session_4.status}}</button>
+        </div>
+      </div>
+    {% endif %}
 
+    {% if session_5.expired %}
+      <div class="line">
+        <div class="line__time">{{session_5.start}} - {{session_5.finish}}</div>
+        <div class="line__count">
+          <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=5 %}'" name="button" {% if session_5.enable %} disabled {% endif %}>{{session_5.status}}</button>
+        </div>
+      </div>
+    {% endif %}
 
-
-{% if session_6.expired %}
-<div class="">
-  <b>{{session_6.start}} - {{session_6.finish}}</b><button  type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=6 %}'" name="button" {% if session_6.enable %} disabled {% endif %}>{{session_6.status}}</button>
-</div>
-{% endif %}
+    {% if session_6.expired %}
+      <div class="line">
+        <div class="line__time">{{session_6.start}} - {{session_6.finish}}</div>
+        <div class="line__count">
+          <button  class="line__btn" type="button" onclick="location.href='{% url 'ccfit_app:check_booking_pilates' session=6 %}'" name="button" {% if session_6.enable %} disabled {% endif %}>{{session_6.status}}</button>
+        </div>
+      </div>
+    {% endif %}
 
 {% endblock %}

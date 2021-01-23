@@ -1,48 +1,77 @@
 <!DOCTYPE html>
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
-    <h1>WELCOME TO CCFIT</h1>
-    <p>Welcome {{ nickname }}</p>
+
+  {% if request.session.bar %}
+  <div class="confirmed">
+    Payment successfuly completed!
+  </div>
+  {% endif %}
+
     {% if not registration %}
-        <h3 style="color:red;">Please finish your registration by clicking on 'Edit Profile' to generate the Enrollment Fee </h3>
+    <div class="message">
+      Welcome to CCfit! Please finish your registration by clicking on 'Edit Profile' to generate the Enrolment Fee.
+    </div>
     {% endif %}
-    <ul class="nav navbar-nav navbar-right">
-        						{% if user.is_authenticated %}
-                          {% if user.is_superuser %}
-                            <p><a href="{% url 'ccfit_app:all_users' %}">Manage users</a></p>
-                          {% endif %}
-                          <p><a href="{% url 'ccfit_app:logout' %}">Logout</a></p>
-                          <p><a href="{% url 'ccfit_app:edit_profile' %}">Edit Settings</a></p>
-                          {% if user.userprofileinfo.id %}
-                            <p><a href="{% url 'ccfit_app:edit_profile_page' user.userprofileinfo.id %}">Edit Profile</a></p>
-                          {% else %}
-                            <p><a href="{% url 'ccfit_app:create_profile_page' %}">Create Profile Page</a></p>
-                          {% endif %}
-                          {% if registration %}
-                            {% if status == 'PAID' %}
-                              <p><a href="{% url 'ccfit_app:booking_page' %}">Book Session</a></p>
-                            {% endif %}
-                          {% endif %}
-        						{% else %}
-                          <p><a href="{% url 'ccfit_app:login' %}">Login</a></p>
-        						      <li><a href="{% url 'ccfit_app:signup' %}" class="btn btn-simple">Sign Up</a></li>
-        		        {% endif %}
-    </ul>
-    {% if type == 'USER' %}
-      {% if status == 'GENERATE' %}
-        <p><a href="{% url 'ccfit_app:payment' type=1 %}">Payment: Enrolment fee</a></p>
+    <div class="book">
+      {% if type == 'TEACHER'   %}
+        <a href="{% url 'ccfit_app:check_classes' %}" class="book__card book__card-1">Check classes</a>
+        {% elif type == 'ADMINISTRATOR'  %}
+          <a href="{% url 'ccfit_app:check_classes' %}" class="book__card book__card-1">Check classes</a>
+          <a href="{% url 'ccfit_app:invoices' %}" class="book__card book__card-2">Generate Invoice</a>
       {% endif %}
-        <p>USER</p>
-        <p><a href="{% url 'ccfit_app:my_bookings' %}">My Bookings</a></p>
-      {% if status_MP == 'REQUESTED' %}
-        <p><a href="{% url 'ccfit_app:payment' type=2 %}">Payment: Monthly payment</a></p>
+
+      {% if user.is_superuser %}
+        <a href="{% url 'ccfit_app:all_users' %}" class="book__card book__card-3">Manage users</a>
       {% endif %}
-    {% elif type == 'TEACHER'  %}
-      <p>TEACHER</p>
-      <p><a href="{% url 'ccfit_app:check_classes' %}">Check classes</a></p>
-    {% else  %}
-      <p><a href="{% url 'ccfit_app:check_classes' %}">Check classes</a></p>
-      <p><a href="{% url 'ccfit_app:invoices' %}">Generate Invoice</a></p>
-      <p>ADMINISTRATOR</p>
-    {% endif %}
+
+      {% if type == 'USER'   %}
+        {% if registration %}
+          {% if status == 'PAID' %}
+            <a href="{% url 'ccfit_app:booking_page' %}" class="book__card book__card-1">Book Session</a>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if type == 'USER' %}
+        <a href="{% url 'ccfit_app:my_bookings' %}" class="book__card book__card-2">My Bookings</a>
+        {% if status_MP == 'REQUESTED' %}
+          <a href="{% url 'ccfit_app:payment' type=2 %}" class="book__card book__card-3">Monthly Payment</a>
+        {% endif %}
+      {% endif %}
+
+      {% if type == 'USER' %}
+        {% if status == 'GENERATE' %}
+          <a href="{% url 'ccfit_app:payment' type=1 %}" class="book__card book__card-3">Enrolment fee</a>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="main__title">Join us now!</div>
+    <div class="main">
+      <div class="card card-1">
+        <img src="../../../static/img/workout.jpg" alt="" class="card__img">
+        <div class="card__name">Workout</div>
+      </div>
+      <div class="card card-2">
+        <img src="../../../static/img/pilates.jpg" alt="" class="card__img">
+        <div class="card__name">Pilates</div>
+      </div>
+      <div class="card card-3">
+        <img src="../../../static/img/jump.jpg" alt="" class="card__img">
+        <div class="card__name">Jump</div>
+      </div>
+      <div class="card card-4">
+        <img src="../../../static/img/spinner.jpg" alt="" class="card__img">
+        <div class="card__name">Spin</div>
+      </div>
+      <div class="card card-5">
+        <img src="../../../static/img/yoga.jpg" alt="" class="card__img">
+        <div class="card__name">Yoga</div>
+      </div>
+      <div class="card card-6">
+        <img src="../../../static/img/dance.jpg" alt="" class="card__img">
+        <div class="card__name">Dance</div>
+      </div>
+    </div>
 {% endblock %}

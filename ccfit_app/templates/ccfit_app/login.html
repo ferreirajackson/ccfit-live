@@ -1,24 +1,41 @@
 
-
-
 <!DOCTYPE html>
-{% extends 'ccfit_app/base.html' %}
 {% load widget_tweaks %}
 {% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../../static/css/style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;500;600;900&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 
-{% block body_block %}
-<section class="box-signup">
-    <form class="user"  method="post" id="loginForm">
-      <div class="box">
-        <div class="box__logo">CC <span class="box__logo-color"> fit</span></div>
-        <h2>Signin</h2>
-        {% csrf_token %}
-        <input type="email" name="email" id="email" class="box__input" placeholder="E-mail" required>
-        <input type="password" name="password" id="password" class="box__input" placeholder="Password" required>
+    <title>ccfit</title>
+  </head>
+  <body>
+    <div class="container">
+      <section class="box-signup">
+        <form class="user"  method="post" id="loginForm">
+          <div class="box">
+            <img src="../../../static/img/logo-small.png" alt="" class="navbar__logo">
+            <h2 class="heading-2">Sign in</h2>
+            {% csrf_token %}
+            <input type="email" name="email" id="email" class="box__input" placeholder="E-mail" required>
+            <input type="password" name="password" id="password" class="box__input" placeholder="Password" required>
 
-        <button type="submit" class="btn">Access</button>
-        <input type="button" class="btn btn-info" value="Sing Up" onclick="location.href='{% url 'ccfit_app:signup' %}';">
-      </div>
-    </form>
-  </section>
-{% endblock %}
+            <button type="submit"  class="btn">Access</button>
+            <input type="button" class="btn-2" value="Sign Up" onclick="location.href='{% url 'ccfit_app:signup' %}';">
+          </div>
+        </form>
+      </section>
+    </div>
+    <div class="footer">
+      <div class="footer__button footer__button-1">About us</div>
+      <div class="footer__button footer__button-2">Privacy</div>
+      <div class="footer__button footer__button-3">Join us!</div>
+      <div class="footer__button footer__button-4">Careers</div>
+      <div class="footer__copyright">&copy; Copyright - All rights reserved - 2021</div>
+    </div>
+  </body>
+</html>
