@@ -21,7 +21,7 @@ from django.urls import path
 # Main urls routes file
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'^ccfit/', include('ccfit_app.urls',namespace='ccfit_app')),
-    path(r'^ccfit/', include('django.contrib.auth.urls')),
+    path(r'ccfit/', include('ccfit_app.urls',namespace='ccfit_app')),
+    path(r'ccfit/', include('django.contrib.auth.urls')),
     path('', include('ccfit_app.urls')),
 ]

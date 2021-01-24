@@ -10,7 +10,7 @@ urlpatterns = [
     url(r"logout/$", auth_views.LogoutView.as_view(), name="logout"),
     url(r"edit_profile/$", views.EditProfile.as_view(), name="edit_profile"),
     url(r"password/$", views.PasswordsChangeView.as_view(template_name='ccfit_app/change_password.html'), name="change_password"),
-    url("edit_profile_page/(?P<pk>\d+)", views.EditProfilePageView.as_view(), name="edit_profile_page"),
+    url(r"edit_profile_page/(?P<pk>\d+)", views.EditProfilePageView.as_view(), name="edit_profile_page"),
     url(r"password_sucess/$", views.password_sucess, name="password_sucess"),
     url("create_profile_page/$", views.CreateProfilePageView.as_view(), name="create_profile_page"),
     url(r"booking_page/$", views.BookingPage, name="booking_page"),
