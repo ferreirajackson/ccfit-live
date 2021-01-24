@@ -91,7 +91,7 @@ def Payment_request(request):
 					message = 'Dear ' + str(verify_enrollment_unique.email) + '\nThank you for trusting CCFIT to be your gym. \nThis is your receipt for paying €' +  str(verify_enrollment_unique.cost) + ' regarding the ' + verify_enrollment_unique.type
 					send_mail('CCFIT Invoice: ' + str(verify_enrollment_unique.from_date) + ' - ' + str(verify_enrollment_unique.to_date), message, 'ccfitgym@gmail.com', [email_user], fail_silently=False)
 					break
-	request.session['bar'] = 'PAID'
+	request.session['confirm_message'] = 'PAID'
 	return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 	# return render(request, 'ccfit_app/index.html')
 
@@ -126,7 +126,7 @@ def SendInvoice(request, pk):
 # shows the info for the user before paying
 @login_required
 def Payment(request, type):
-	request.session['bar'] = ''
+	request.session['confirm_message'] = ''
 	request.session['type_payment'] = type
 	user = UserProfileInfo.objects.get(email=request.user)
 	# Checking if is enrollment fee or montly payment
@@ -304,7 +304,7 @@ def Confirmation_Booking(request, n1):
 # Process all the bookings for each user since the first class
 @login_required
 def MyBookings(request):
-    request.session['bar'] = ''
+    request.session['confirm_message'] = ''
     models = [Workout, Pilates, Spin, Yoga, Jump]
     data, new = {}, {}
     sessions = {'1': 'from 06:00 to 08:00','2': 'from 09:00 to 11:00','3': 'from 12:00 to 14:00','4': 'from 15:00 to 17:00','5': 'from 18:00 to 20:00', '6': 'from 21:00 to 23:00'}
@@ -1175,7 +1175,7 @@ def Check_Booking_workout(request, session):
 # Bookingpage for selecting the section
 @login_required
 def BookingPage(request):
-	request.session['bar'] = ''
+	request.session['confirm_message'] = ''
 	form = ExampleForm()
 	return render(request, 'ccfit_app/booking_page.html', {'form':form})
 
@@ -1207,12 +1207,10 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
 	# Runs as soon as the page is opened
 	# Runs as soon as the page is opened
     def get(self, request, pk):
-        request.session['bar'] = ''
+        request.session['confirm_message'] = ''
         obj = get_object_or_404(UserProfileInfo, pk = pk)
         form = ProfilePageForm(instance = obj)
-        return render(request, 'ccfit_app/edit_profile_page.html', {
-        'form': form,
-    })
+        return render(request, 'ccfit_app/edit_profile_page.html', {'form': form, 'type_user': obj.type})
 
 	# Runs when the submit is pressed
     def post(self, request, pk):
@@ -1267,7 +1265,7 @@ def password_sucess(request):
 
 
 def LoginView(request):
-	request.session['bar'] = ''
+	request.session['confirm_message'] = ''
 	print('GOT HERE IN THE LOGINVIEW')
 	if request.method == 'POST':
 		print(request.POST.get('email'))
@@ -1329,7 +1327,7 @@ class EditProfile(LoginRequiredMixin, generic.UpdateView):
     template_name = "ccfit_app/edit_profile.html"
 
     def get_object(self):
-        self.request.session['bar'] = ''
+        self.request.session['confirm_message'] = ''
         print('CHEEEECK IFSS GOTTEN EHEHHHHHHHHHHHERE')
         return self.request.user
 
@@ -1396,7 +1394,7 @@ class UsersUpdateView(LoginRequiredMixin, UpdateView):
         obj = get_object_or_404(UserProfileInfo, pk = pk)
         form = UserProfileInfoFormUsers(instance = obj)
         return render(request, 'ccfit_app/updateUsers.html', {
-        'form': form
+        'form': form, 'type_user': obj.type
     })
 
 	# send info when the submit button is pressed

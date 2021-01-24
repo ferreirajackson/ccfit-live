@@ -4,32 +4,36 @@
 {% load widget_tweaks %}
 {% block body_block %}
 
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script>
-  var perfEntries = performance.getEntriesByType("navigation");
-  if (perfEntries[0].type === "back_forward") {
-    location.reload(true);
-  }
+$( document ).ready(function() {
+  $("#field").hide();
+});
 </script>
 
 <section class="box-center">
-    <div class="content">
-        <h2 class="heading-2">Edit Profile</h2>
-        <form method="post" id="loginForm">
-          <div class="content">
-            {% csrf_token %}
-            {% render_field form.nickname class="box__input box__input-1" placeholder="Nickname" %}
-            {% render_field form.gender class="box__input box__input-2"  placeholder="Gender" %}
-            {% render_field form.birth_date type="date" class="box__input box__input-3" placeholder="Birth date" %}
-            {% render_field form.address1 class="box__input box__input-4" placeholder="Address 1" %}
-            {% render_field form.address2 class="box__input box__input-5" placeholder="Address 2" %}
-            {% render_field form.county class="box__input box__input-6" placeholder="County" %}
-            {% render_field form.country class="box__input box__input-7" placeholder="Country" %}
-            {% render_field form.prefix class="box__input box__input-8" placeholder="Prefix" %}
-            {% render_field form.phone class="box__input box__input-9" placeholder="Phone" %}
-            {% render_field form.membership class="box__input box__input-1" placeholder="Membership" %}
-            <button type="submit" class="btn btn__2c">Save changes</button>
-          </div>
-        </form>
-    </div>
+  <div class="content">
+    <h2 class="heading-2">Edit Profile</h2>
+    <form method="post" id="loginForm">
+      <div class="content">
+        {% csrf_token %}
+        {% render_field form.nickname class="box__input box__input-1" placeholder="Nickname" %}
+        {% render_field form.gender class="box__input box__input-2"  placeholder="Gender" %}
+        {% render_field form.birth_date type="date" class="box__input box__input-3" placeholder="Birth date" %}
+        {% render_field form.address1 class="box__input box__input-4" placeholder="Address 1" %}
+        {% render_field form.address2 class="box__input box__input-5" placeholder="Address 2" %}
+        {% render_field form.county class="box__input box__input-6" placeholder="County" %}
+        {% render_field form.country class="box__input box__input-7" placeholder="Country" %}
+        {% render_field form.prefix class="box__input box__input-8" placeholder="Prefix" %}
+        {% render_field form.phone class="box__input box__input-9" placeholder="Phone" %}
+        {% if type_user == 'USER' %}
+          {% render_field form.membership class="box__input box__input-1" placeholder="Membership" %}
+        {% else %}
+          {% render_field form.membership class="box__input box__input-1" id="field" placeholder="Membership" %}
+        {% endif %}
+        <button type="submit" class="btn btn__2c">Save changes</button>
+      </div>
+    </form>
+  </div>
 </section>
 {% endblock %}

@@ -3,14 +3,26 @@
 {% load widget_tweaks %}
 {% block body_block %}
 
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script>
+$( document ).ready(function() {
+  $("#field").hide();
+});
+</script>
+
 <section class="box-center">
   <div class="content">
     <h2 class="heading-2">Manage users</h2>
     <form method="post">
       <div class="content">
         {% csrf_token %}
+
         {% render_field form.type class="box__input box__input-1" placeholder="Type" %}
-        {% render_field form.active class="box__input box__input-1" placeholder="Active" %}
+        {% if type_user == 'USER' %}
+          {% render_field form.active class="box__input box__input-1" placeholder="Active" %}
+        {% else %}
+          {% render_field form.active class="box__input box__input-1" id="field" placeholder="Active" %}
+        {% endif %}
         {% render_field form.nickname class="box__input box__input-1" placeholder="Nickname" %}
         {% render_field form.gender class="box__input box__input-1" placeholder="Gender" %}
         {% render_field form.birth_date class="box__input box__input-1" placeholder="DOB" %}
