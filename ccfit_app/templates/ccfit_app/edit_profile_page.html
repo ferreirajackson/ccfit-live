@@ -6,9 +6,14 @@
 
 <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script>
+
 $( document ).ready(function() {
   $("#field").hide();
+  $("#birth_date").focus(function() {
+    this.type='date'
+  });
 });
+
 </script>
 
 <section class="box-center">
@@ -19,7 +24,7 @@ $( document ).ready(function() {
         {% csrf_token %}
         {% render_field form.nickname class="box__input box__input-1" placeholder="Nickname" %}
         {% render_field form.gender class="box__input box__input-2"  placeholder="Gender" %}
-        {% render_field form.birth_date type="date" class="box__input box__input-3" placeholder="Birth date" %}
+        {% render_field form.birth_date type="text" id="birth_date" class="box__input box__input-3" placeholder="Birth Date"  %}
         {% render_field form.address1 class="box__input box__input-4" placeholder="Address 1" %}
         {% render_field form.address2 class="box__input box__input-5" placeholder="Address 2" %}
         {% render_field form.county class="box__input box__input-6" placeholder="County" %}
