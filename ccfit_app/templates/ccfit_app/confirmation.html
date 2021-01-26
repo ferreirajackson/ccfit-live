@@ -2,7 +2,6 @@
 {% extends 'ccfit_app/base.html' %}
 {% block body_block %}
 <!-- <div class="message">{{ response }}</div> -->
-
     {% if response == 'Your booking have been successfully cancelled' %}
         <div class="message">{{ response }}</div>
     {% elif  response == 'Your booking have been successfully confirmed' %}
@@ -10,11 +9,13 @@
     {% else %}
         <div class="message">{{ response }}</div>
     {% endif %}
-    <div class="box-center">
+      <div class="box-center">
         <div class="content">
-            <h2 class="heading-2">Do you wish to make another booking?</h2>
-            <button class="btn" type="button" onclick="location.href='{% url 'ccfit_app:booking_page' %}'" name="button">Yes</button>
-            <button class="btn" type="button" onclick="location.href='{% url 'ccfit_app:index' %}'" name="button">No</button>
-        </div>
+          <div class="content">
+              <h2 class="heading-2">Do you wish to make another booking?</h2>
+              <button class="btn btn__2c" type="button" onclick="location.href='{% url 'ccfit_app:booking_page' %}'" name="button">Yes</button>
+              <button class="btn btn__2c" type="button" onclick="location.href='{% url 'ccfit_app:index' %}'" name="button">No</button>
+          </div>
+      </div>
     </div>
 {% endblock %}

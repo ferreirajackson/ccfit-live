@@ -55,7 +55,7 @@
       <td class="table__item">{{ subscription }}</td>
     </tr>
   </table>
-<button  class="btn btn__2c" type="button" onclick="location.href='{% url 'ccfit_app:invoice_user' pk %}'"  name="button">View Invoice</button>
+<button  class="btn btn__2c" type="button" onclick="location.href='{% url 'ccfit_app:invoice_user' pk %}'" name="button" target="_blank">View Invoice</button>
 
   <div class="box-classes">
   <form class="form-payment" action="{% url 'ccfit_app:payment_request' %}" method="post" id="payment-form">
