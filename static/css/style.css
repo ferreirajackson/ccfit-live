@@ -27,7 +27,8 @@ body {
   font-size: 2rem; }
 
 .container {
-  display: grid; }
+  display: grid;
+  grid-template-rows: max-content 1fr max-content; }
 
 .navbar {
   background-color: #fff;
@@ -102,8 +103,8 @@ body {
         @media only screen and (max-width: 25em) {
           .navbar__button {
             grid-row: 2 / 3;
-          margin: 1rem;
-        font-size: 1.5rem; } }
+            margin: 1rem 0.2rem;
+            font-size: 1.5rem; } }
 
     .navbar__button:hover {
       background-color: #7CB342;
@@ -172,6 +173,11 @@ body {
               grid-gap: 2rem;
               grid-template-columns: 1fr repeat(2, 20rem) 1fr; } }
 
+              @media only screen and (max-width: 25em) {
+                .main {
+                  grid-gap: 1rem;
+                  grid-template-columns: 1fr repeat(2, 14rem) 1fr; } }
+
   .main__title {
     font-size: 17rem;
     font-weight: 600;
@@ -194,8 +200,16 @@ body {
             font-size: 7rem;
           } }
 
+          @media only screen and (max-width: 25em) {
+            .main__title {
+              font-size: 6rem; } }
+
 .card-1 {
   grid-column: 2 / 3; }
+
+  /* @media only screen and (max-width: 25em) {
+    .card-1 {
+      width: 100%; } } */
 
   @media only screen and (max-width: 56.25em) {
     .card-2 {
@@ -244,6 +258,11 @@ body {
   font-size: 3rem;
   font-weight: 600;
   text-transform: uppercase; }
+
+  @media only screen and (max-width: 25em) {
+    .card__name {
+      padding: 1rem;
+      font-size: 2rem; } }
 
 .book {
   display: grid;
@@ -366,7 +385,7 @@ body {
 
 .box-signup {
   background-image: url(../img/cover.jpg);
-  height: 100%;
+  height: 120vh;
   padding: 4rem 0 10rem 0;
   display: grid;
   justify-items: center;
@@ -463,7 +482,7 @@ body {
 
   @media only screen and (max-width: 37.5em) {
     .box-center {
-      grid-template-columns: max-content; } }
+      grid-template-columns: min-content; } }
 
 .content {
   background-color: #fff;
