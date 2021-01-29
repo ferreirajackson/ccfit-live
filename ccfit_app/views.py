@@ -1324,7 +1324,6 @@ class EditProfile(LoginRequiredMixin, generic.UpdateView):
 
     def get_object(self):
         self.request.session['confirm_message'] = ''
-        print('CHEEEECK IFSS GOTTEN EHEHHHHHHHHHHHERE')
         return self.request.user
 
 
@@ -1357,8 +1356,6 @@ def index(request):
             status_mp = course.status
             if status_mp == 'REQUESTED':
                 break
-    print(registered)
-    print('registeressssssssssssssssssssssssssssssssssssssssssd')
     mydict = {'type': value_type, 'registration': registered, 'status': status, 'status_MP': status_mp, 'nickname': nickname}
     return render(request, 'ccfit_app/index.html', mydict)
 
