@@ -134,6 +134,9 @@ class MaxSession(models.Model):
     yoga = models.IntegerField(null=True)
     spin = models.IntegerField(null=True)
     jump = models.IntegerField(null=True)
+    enrolment = models.IntegerField(null=True)
+    w_only = models.IntegerField(null=True)
+    a_classes = models.IntegerField(null=True)
 
     def __str__(self):
         return self.description

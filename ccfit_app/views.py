@@ -37,16 +37,17 @@ stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1
 @login_required
 def Payment_request(request):
 	# Enrollment fee
+	num_max_users = MaxSession.objects.get(key='CCFIT')
 	if request.session['type_payment'] == '1':
-		amount = 30
+		amount = num_max_users.enrolment
 		description = 'enrolment fee'
 	else:
 		# Monthly payment
 		user = UserProfileInfo.objects.get(email=request.user)
 		if user.active == 'ALL CLASSES':
-			amount = 50
+			amount = num_max_users.a_classes
 		elif user.active == 'WORKOUT ONLY':
-			amount = 35
+			amount = num_max_users.w_only
 		else:
 		    print('Inactive User')
 		description = 'monthly payment'
@@ -622,13 +623,11 @@ class YogaView(LoginRequiredMixin, generic.TemplateView):
             #---------------------------------------------------------------------
             #---------------------------------------------------------------------
             if booking_date_object == today_date_object:
-                #do something
                 start_hour = time.strftime("%H")
                 start_minute = time.strftime("%M")
 
                 for key in context:
                     schedule_date = context[key]['start']
-
                     start_time = (int(schedule_date[0:2])*60 + int(schedule_date[3:5])-30)
                     current_time =  datetime.now().hour*60 +datetime.now().minute
                     if start_time <= current_time:
@@ -860,11 +859,12 @@ def invoice_insertion(request):
 	verify_enrollment = Invoice.objects.filter(email=request.user, type='MONTHLY PAYMENT')
 	if not verify_enrollment.exists():
 		user = UserProfileInfo.objects.get(email=request.user)
-		cost = 35
+		num_max_users = MaxSession.objects.get(key='CCFIT')
+		cost = num_max_users.w_only
 		if user.active == 'WORKOUT ONLY':
-			cost = 35
+			cost = num_max_users.w_only
 		else:
-			cost = 50
+			cost = num_max_users.a_classes
 		verify = Invoice.objects.get(email=request.user, type='ENROLMENT FEE')
 		today_date = datetime.today().strftime('%Y-%m-%d')
 		today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
@@ -881,9 +881,10 @@ def invoice_insertion(request):
 			# ONLY CHECKS IF THE USER CHANGED THE enrollment
 			# FROM WORKOUT ONLY TO ALL CLASSES
 			user = UserProfileInfo.objects.get(email=request.user)
+			num_max_users = MaxSession.objects.get(key='CCFIT')
 			if user.active == 'ALL CLASSES':
 				update_invoice = Invoice.objects.get(email=request.user, from_date__lte=today_date_object, to_date__gte=today_date_object, type="MONTHLY PAYMENT", year=currentYear)
-				update_invoice.cost = 50
+				update_invoice.cost = num_max_users.a_classes
 				update_invoice.save()
 		else:
 			flag_found = True
@@ -899,11 +900,12 @@ def invoice_insertion(request):
 				date_booked = datetime.strptime(request.session['value'], '%Y-%m-%d').date()
 				if date_booked >= from_sameday and date_booked <= to_30d_date:
 					user = UserProfileInfo.objects.get(email=request.user)
-					cost = 35
+					num_max_users = MaxSession.objects.get(key='CCFIT')
+					cost = num_max_users.w_only
 					if user.active == 'WORKOUT ONLY':
-						cost = 35
+						cost = num_max_users.w_only
 					else:
-						cost = 50
+						cost = num_max_users.a_classes
 					today_date = datetime.today().strftime('%Y-%m-%d')
 					today_date_audit = datetime.strptime(today_date, '%Y-%m-%d').date()
 					time = datetime.today().strftime('%H:%M:%S')
@@ -1214,6 +1216,7 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
 
 	# Runs when the submit is pressed
     def post(self, request, pk):
+        num_max_users = MaxSession.objects.filter(key='CCFIT')
         obj = get_object_or_404(UserProfileInfo, pk = pk)
         form = ProfilePageForm(data=request.POST, instance = obj)
         if  form.is_valid():
@@ -1221,7 +1224,7 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
             profile.registration_completed = True
             profile.active = profile.membership
 			# Validates the date and hour so the user can use it as
-			# audit info
+			# print('fdfdf')
             user = UserProfileInfo.objects.get(email=request.user)
             if user.type == 'USER':
 	            today_date = datetime.today().strftime('%Y-%m-%d')
@@ -1237,19 +1240,12 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
 	                time_audit = datetime.strptime(time, '%H:%M:%S').time()
 					# Inserting the data retrieved to the invoice table creating the
 					# first invoice 'ENROLLMENT FEE' as soon as the user creates the profile
-	                p = Invoice(email=profile.email,
-		            			 from_date=today_date_object,
-								 to_date=future_30days,
-		            			 year=currentYear,
-		            			 cost=30,
-		            			 type="ENROLMENT FEE",
-		            			 status="GENERATE",
-								 date_audit=today_date_audit,
-								 hour_audit=time_audit)
+	                p = Invoice(email=profile.email, from_date=today_date_object,to_date=future_30days, year=currentYear, cost=num_max_users.enrolment, type="ENROLMENT FEE", status="GENERATE",date_audit=today_date_audit,hour_audit=time_audit)
 	                p.save(force_insert=True)
             profile.save()
             return HttpResponseRedirect(reverse_lazy('ccfit:index'))
         else:
+            print('fdfds')
             return HttpResponseRedirect(reverse_lazy('ccfit:index'))
 
 # View to change the password
