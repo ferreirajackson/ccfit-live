@@ -19,8 +19,8 @@ Considering the scenario described above, here are the functionalities the syste
 
 * Administrator:
 * * Manage users: Edit all the information related to the users and teachers such as personal info, role (user, teacher or admin), and the type of subscription whether it “All Classes” or “Workout Only”.
-* * Check classes: Check the daily schedule for each class by generating reports so the admin can designate the instructors for the classes.
-* * Generate Invoice: Manage and generate invoices for each user, whether if it is “Enrolment Fee” or “Monthly payment”. 
+** Check classes: Check the daily schedule for each class by generating reports so the admin can designate the instructors for the classes.
+** Generate Invoice: Manage and generate invoices for each user, whether if it is “Enrolment Fee” or “Monthly payment”. 
 
 * Teacher:
 * * Check classes: Check the daily schedule for each class by generating reports so the admin can designate the instructors for the classes.
