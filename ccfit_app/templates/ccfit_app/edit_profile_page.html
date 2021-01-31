@@ -32,9 +32,8 @@ $( document ).ready(function() {
         {% render_field form.country class="box__input box__input-2" placeholder="Country" %}
         {% render_field form.prefix class="box__input box__input-2" placeholder="Prefix" %}
         {% render_field form.phone class="box__input box__input-2" placeholder="Phone" %}
-        {% render_field form.membership class="box__input box__input-1" placeholder="Membership" %}
         {% if type_user == 'USER' %}
-          {% render_field form.membership class="box__input box__input-1" placeholder="Membership" %}
+          {% render_field form.membership class="box__input box__input-1" placeholder="Membership" %}          
         {% else %}
           {% render_field form.membership class="box__input box__input-1" id="field" placeholder="Membership" %}
         {% endif %}

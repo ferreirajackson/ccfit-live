@@ -28,7 +28,8 @@ import os
 # logic for the whole website is kept
 
 
-stripe.api_key = os.environ.get('STRIPE_PRIVATE_KEY')
+# stripe.api_key = os.environ.get('STRIPE_PRIVATE_KEY')
+stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1x6BJ5yOpPik2qct0yNaewqrLNerI7oQbdLf00Oyz3Ulph'
 
 
 # Function responsible process the payment wheather is
@@ -1215,7 +1216,7 @@ class EditProfilePageView(LoginRequiredMixin, generic.UpdateView):
 
 	# Runs when the submit is pressed
     def post(self, request, pk):
-        num_max_users = MaxSession.objects.filter(key='CCFIT')
+        num_max_users = MaxSession.objects.get(key='CCFIT')
         obj = get_object_or_404(UserProfileInfo, pk = pk)
         form = ProfilePageForm(data=request.POST, instance = obj)
         if  form.is_valid():
