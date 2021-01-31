@@ -88,25 +88,14 @@ WSGI_APPLICATION = 'ccfit_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'daflmhrhnln496',
-        'HOST': 'ec2-50-19-247-157.compute-1.amazonaws.com',
-        'PORT': 5432,
-        'USER': 'jxullbffbbdzsa',
-        'PASSWORD': 'fe0e51f1eff10b9579478f386c42908719d43b4404eac896c5bb23f8b234da16',
+        'NAME': os.environ.get('PS_NAME'),
+        'HOST': os.environ.get('PS_HOST'),
+        # if doesnt work, parse the port to int
+        'PORT': os.environ.get('PS_PORT'),
+        'USER': os.environ.get('PS_USERPS_USER'),
+        'PASSWORD': os.environ.get('PS_PASSWORD'),
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get('PS_NAME'),
-#         'HOST': os.environ.get('PS_HOST'),
-#         # if doesnt work, parse the port to int
-#         'PORT': os.environ.get('PS_PORT'),
-#         'USER': os.environ.get('PS_USERPS_USER'),
-#         'PASSWORD': os.environ.get('PS_PASSWORD'),
-#     }
-# }
 
 
 
@@ -163,10 +152,8 @@ LOGOUT_REDIRECT_URL = "login"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_HOST_USER = os.environ.get('HEROKU_EMAIL')
-EMAIL_HOST_USER = 'ccfitgym@gmail.com'
-# EMAIL_HOST_PASSWORD = os.environ.get('HEROKU_EMAIL_PASSWORD')
-EMAIL_HOST_PASSWORD = 'ccfit1234!'
+EMAIL_HOST_USER = os.environ.get('HEROKU_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('HEROKU_EMAIL_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'

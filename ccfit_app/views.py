@@ -28,8 +28,7 @@ import os
 # logic for the whole website is kept
 
 
-# stripe.api_key = os.environ.get('STRIPE_PRIVATE_KEY')
-stripe.api_key = 'sk_test_51I8CofKwMtRnc3TERmC6RgEX2KX4okNeqmnHVAZwu0wCva0SewBG1x6BJ5yOpPik2qct0yNaewqrLNerI7oQbdLf00Oyz3Ulph'
+stripe.api_key = os.environ.get('STRIPE_PRIVATE_KEY')
 
 
 # Function responsible process the payment wheather is
