@@ -85,17 +85,6 @@ WSGI_APPLICATION = 'ccfit_project.wsgi.application'
 
 # Database set up
 # Here is the databse set up for postgresql
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'daflmhrhnln496',
-#         'HOST': 'ec2-50-19-247-157.compute-1.amazonaws.com',
-#         'PORT': 5432,
-#         'USER': 'jxullbffbbdzsa',
-#         'PASSWORD': 'fe0e51f1eff10b9579478f386c42908719d43b4404eac896c5bb23f8b234da16',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -164,9 +153,7 @@ LOGOUT_REDIRECT_URL = "login"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('HEROKU_EMAIL')
-# EMAIL_HOST_USER = 'ccfitgym@gmail.com'
 EMAIL_HOST_PASSWORD = os.environ.get('HEROKU_EMAIL_PASSWORD')
-# EMAIL_HOST_PASSWORD = 'ccfit1234!'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'
