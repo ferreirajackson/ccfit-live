@@ -44,9 +44,11 @@ $ pip install requirements.txt
 The following flowchart represents the relation between class and sessions from the user view when he has both “All Classes” and “Workout Only” subscription:
 
 All Classes:
+
 ![cluster](./readmeimages/allclasses.png)
 
 Workout only:
+
 ![cluster](./readmeimages/workoutonly.png)
 
 
